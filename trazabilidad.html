@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Sistema de Trazabilidad y Registros</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #fef3e6;
+    --paper: #fffcf7;
+    --paper-2: #fbf1e2;
+    --line: #e3d3ad;
+    --olive: #97a256;
+    --olive-dark: #717a3f;
+    --olive-deep: #545c2c;
+    --text: #555f83;
+    --text-dark: #3a4160;
+    --text-dim: #8890ab;
+    --warn: #b3592f;
+    --serif: 'Newsreader', Georgia, serif;
+    --sans: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+    --mono: 'IBM Plex Mono', 'Courier New', monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text-dark);
+    font-family:var(--sans);
+    padding:28px 16px 70px;
+  }
+  .wrap{max-width:740px;margin:0 auto;}
+
+  /* Header */
+  .header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:16px;
+    padding-bottom:20px;
+    margin-bottom:26px;
+    border-bottom:2px solid var(--olive);
+  }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:3px;
+    color:var(--olive-dark);
+    text-transform:uppercase;
+    margin-bottom:8px;
+  }
+  h1{
+    margin:0;
+    font-family:var(--serif);
+    font-weight:600;
+    font-size:30px;
+    color:var(--text-dark);
+    letter-spacing:-0.2px;
+  }
+  .sub{
+    color:var(--text-dim);
+    font-size:13px;
+    margin-top:8px;
+    max-width:46ch;
+    line-height:1.5;
+  }
+
+  /* Stamp: rack/bandeja identification badge */
+  .stamp{
+    flex-shrink:0;
+    border:1.5px solid var(--olive);
+    background:var(--paper);
+    padding:10px 14px;
+    text-align:center;
+    min-width:96px;
+  }
+  .stamp .label{
+    font-family:var(--mono);
+    font-size:9px;
+    letter-spacing:1.5px;
+    color:var(--text-dim);
+    text-transform:uppercase;
+  }
+  .stamp .value{
+    font-family:var(--serif);
+    font-size:22px;
+    font-weight:600;
+    color:var(--olive-deep);
+    line-height:1.2;
+    margin-top:2px;
+  }
+
+  .panel{
+    background:var(--paper);
+    border:1px solid var(--line);
+    padding:22px;
+    margin-bottom:18px;
+  }
+  .section-title{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    margin:0 0 18px;
+    padding-bottom:12px;
+    border-bottom:1px solid var(--line);
+  }
+  .section-num{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--olive-dark);
+    letter-spacing:1px;
+  }
+  .section-title h2{
+    margin:0;
+    font-family:var(--serif);
+    font-size:17px;
+    font-weight:600;
+    color:var(--text-dark);
+  }
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field.full{grid-column:1/-1;}
+  label{
+    font-size:12.5px;
+    color:var(--text);
+    font-weight:600;
+  }
+  label .unit{color:var(--text-dim);font-weight:400;font-family:var(--mono);font-size:11px;}
+  input, select, textarea{
+    background:var(--paper-2);
+    border:1px solid var(--line);
+    color:var(--text-dark);
+    padding:10px 12px;
+    font-size:14px;
+    font-family:var(--sans);
+    outline:none;
+    transition:border-color .15s, background .15s;
+    width:100%;
+  }
+  input:focus, select:focus, textarea:focus{border-color:var(--olive); background:var(--paper);}
+  textarea{resize:vertical;min-height:60px;font-family:var(--sans);}
+  input[type="number"]{font-family:var(--mono);}
+
+  .measure{
+    display:flex;align-items:stretch;
+    border:1px solid var(--line);
+    background:var(--paper-2);
+  }
+  .measure input{border:none;background:transparent;flex:1;}
+  .measure .u{
+    display:flex;align-items:center;
+    padding:0 12px;
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--paper);
+    background:var(--olive-dark);
+    white-space:nowrap;
+  }
+
+  /* Toggle rows for confirmations */
+  .toggle-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:12px 14px;
+    background:var(--paper-2);
+    border:1px solid var(--line);
+    margin-bottom:10px;
+  }
+  .toggle-row:last-child{margin-bottom:0;}
+  .toggle-text{display:flex;flex-direction:column;gap:2px;}
+  .toggle-text .t-label{font-size:13px;font-weight:600;color:var(--text-dark);}
+  .toggle-text .t-desc{font-size:11.5px;color:var(--text-dim);}
+  .switch{
+    position:relative;
+    width:44px;height:24px;
+    flex-shrink:0;
+  }
+  .switch input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;z-index:2;}
+  .switch .track{
+    position:absolute;inset:0;
+    background:var(--line);
+    transition:background .15s;
+  }
+  .switch .thumb{
+    position:absolute;top:3px;left:3px;
+    width:18px;height:18px;
+    background:var(--paper);
+    transition:transform .15s;
+  }
+  .switch input:checked ~ .track{background:var(--olive);}
+  .switch input:checked ~ .thumb{transform:translateX(20px);}
+
+  .detail-field{
+    margin-top:8px;
+    display:none;
+  }
+  .detail-field.show{display:block;}
+
+  button.submit{
+    width:100%;
+    padding:15px;
+    background:var(--olive-deep);
+    color:var(--paper);
+    border:none;
+    font-family:var(--sans);
+    font-weight:600;
+    font-size:14px;
+    letter-spacing:0.4px;
+    cursor:pointer;
+    transition:background .15s;
+    margin-top:6px;
+  }
+  button.submit:hover{background:var(--olive-dark);}
+  button.submit:disabled{background:var(--text-dim);cursor:default;}
+
+  .status{
+    font-family:var(--mono);
+    font-size:12px;
+    margin-top:10px;
+    min-height:16px;
+    color:var(--olive-dark);
+  }
+  .status.err{color:var(--warn);}
+
+  /* Log */
+  .log-head{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--line);
+  }
+  .count-badge{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--paper);
+    background:var(--olive-dark);
+    padding:3px 9px;
+  }
+  .export-btn{
+    background:transparent;
+    border:1px solid var(--olive);
+    color:var(--olive-deep);
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:1px;
+    padding:7px 12px;
+    cursor:pointer;
+    text-transform:uppercase;
+  }
+  .export-btn:hover{background:var(--olive);color:var(--paper);}
+
+  .table-scroll{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11.5px;}
+  th{
+    text-align:left;
+    color:var(--text-dim);
+    font-weight:600;
+    padding:8px 10px;
+    border-bottom:1px solid var(--line);
+    white-space:nowrap;
+    text-transform:uppercase;
+    letter-spacing:0.4px;
+    font-size:9.5px;
+  }
+  td{
+    padding:8px 10px;
+    border-bottom:1px solid var(--paper-2);
+    white-space:nowrap;
+    color:var(--text-dark);
+  }
+  tr:hover td{background:var(--paper-2);}
+  .empty{
+    padding:34px 10px;
+    text-align:center;
+    color:var(--text-dim);
+    font-family:var(--mono);
+    font-size:12px;
+  }
+  .num-cell{color:var(--olive-deep);font-weight:600;}
+  .flag-yes{color:var(--warn);font-weight:600;}
+  .flag-no{color:var(--text-dim);}
+
+  .note{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--text-dim);
+    margin-top:20px;
+    text-align:center;
+    line-height:1.7;
+  }
+
+  @media (max-width:560px){
+    .grid, .grid-3{grid-template-columns:1fr;}
+    .header{flex-direction:column;align-items:flex-start;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <div>
+      <div class="eyebrow">Planta piloto &middot; anexo de tesis</div>
+      <h1>Sistema de Trazabilidad y Registros</h1>
+      <div class="sub">Seguimiento de lote desde el ingreso al sector de engorde hasta la obtenci&oacute;n del producto final.</div>
+    </div>
+    <div class="stamp">
+      <div class="label">Rack / Bandeja</div>
+      <div class="value" id="stampValue">&mdash; / &mdash;</div>
+    </div>
+  </div>
+
+  <form id="form">
+
+    <div class="panel">
+      <div class="section-title">
+        <span class="section-num">01</span>
+        <h2>Identificaci&oacute;n</h2>
+      </div>
+      <div class="grid">
+        <div class="field">
+          <label>Operario responsable</label>
+          <input type="text" id="operario" placeholder="ID o nombre" required>
+        </div>
+        <div class="field">
+          <label>Sector de producci&oacute;n</label>
+          <select id="sector">
+            <option>Reproducci&oacute;n</option>
+            <option>Incubaci&oacute;n</option>
+            <option>Engorde</option>
+            <option>Prepupa / Cosecha</option>
+            <option>Procesamiento</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Rack <span class="unit">1&ndash;64</span></label>
+          <input type="number" id="rack" min="1" max="64" placeholder="Ej: 12" required>
+        </div>
+        <div class="field">
+          <label>Bandeja <span class="unit">A&ndash;J</span></label>
+          <select id="bandeja" required>
+            <option value="">Seleccionar</option>
+            <option>A</option><option>B</option><option>C</option><option>D</option><option>E</option>
+            <option>F</option><option>G</option><option>H</option><option>I</option><option>J</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>N&deg; de lote</label>
+          <input type="text" id="lote" placeholder="Ej: L-0824" required>
+        </div>
+        <div class="field">
+          <label>Estadio biol&oacute;gico</label>
+          <select id="estadio">
+            <option>Huevo</option>
+            <option>Larva</option>
+            <option>Prepupa</option>
+            <option>Pupa</option>
+            <option>Adulto</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="section-title">
+        <span class="section-num">02</span>
+        <h2>Condiciones ambientales</h2>
+      </div>
+      <div class="grid">
+        <div class="field">
+          <label>Temperatura ambiental</label>
+          <div class="measure">
+            <input type="number" step="0.1" id="temperatura" placeholder="0.0" required>
+            <span class="u">&deg;C</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Humedad relativa</label>
+          <div class="measure">
+            <input type="number" step="0.1" id="humedad" placeholder="0.0" required>
+            <span class="u">%HR</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="section-title">
+        <span class="section-num">03</span>
+        <h2>Actividades de manejo</h2>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-text">
+          <span class="t-label">Recambio de vegetales</span>
+          <span class="t-desc">Confirmar si se realiz&oacute; durante este registro</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="recambioVeg">
+          <span class="track"></span><span class="thumb"></span>
+        </label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-text">
+          <span class="t-label">Reposici&oacute;n de sustrato</span>
+          <span class="t-desc">Confirmar si se realiz&oacute; durante este registro</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="reposicionSustrato">
+          <span class="track"></span><span class="thumb"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="section-title">
+        <span class="section-num">04</span>
+        <h2>Estado sanitario</h2>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-text">
+          <span class="t-label">Presencia de mortalidad</span>
+          <span class="t-desc">Marcar si se observaron individuos muertos</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="mortalidad" data-detail="detalleMortalidad">
+          <span class="track"></span><span class="thumb"></span>
+        </label>
+      </div>
+      <div class="detail-field" id="detalleMortalidad">
+        <input type="text" id="mortalidadDetalle" placeholder="Detalle: cantidad estimada / zona de la bandeja">
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-text">
+          <span class="t-label">Alteraciones de comportamiento o motilidad</span>
+          <span class="t-desc">Movimiento anormal, letargo, agrupamiento at&iacute;pico</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="alteraciones" data-detail="detalleAlteraciones">
+          <span class="track"></span><span class="thumb"></span>
+        </label>
+      </div>
+      <div class="detail-field" id="detalleAlteraciones">
+        <input type="text" id="alteracionesDetalle" placeholder="Detalle de la alteraci\u00f3n observada">
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-text">
+          <span class="t-label">Hongos, &aacute;caros u otras anomal&iacute;as sanitarias</span>
+          <span class="t-desc">Presencia visible de contaminaci&oacute;n o plagas</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="anomalias" data-detail="detalleAnomalias">
+          <span class="track"></span><span class="thumb"></span>
+        </label>
+      </div>
+      <div class="detail-field" id="detalleAnomalias">
+        <input type="text" id="anomaliasDetalle" placeholder="Detalle: tipo de anomal\u00eda observada">
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="section-title">
+        <span class="section-num">05</span>
+        <h2>Cierre y observaciones</h2>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-text">
+          <span class="t-label">Finalizaci&oacute;n del ciclo y cosecha del lote</span>
+          <span class="t-desc">Marcar si este registro corresponde al cierre del lote</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="cierreLote">
+          <span class="track"></span><span class="thumb"></span>
+        </label>
+      </div>
+      <div class="field full" style="margin-top:14px;">
+        <label>Observaciones generales</label>
+        <textarea id="observaciones" placeholder="Opcional"></textarea>
+      </div>
+
+      <button type="submit" class="submit" id="submitBtn">Enviar registro</button>
+      <div class="status" id="status"></div>
+    </div>
+
+  </form>
+
+  <div class="panel">
+    <div class="log-head">
+      <div class="section-title" style="border:none;padding:0;margin:0;">
+        <span class="section-num">06</span>
+        <h2>Historial de registros</h2>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span class="count-badge" id="countBadge">0</span>
+        <button type="button" class="export-btn" id="exportBtn">Exportar CSV</button>
+      </div>
+    </div>
+    <div class="table-scroll">
+      <table id="logTable" style="display:none;">
+        <thead>
+          <tr>
+            <th>Fecha/hora</th>
+            <th>Lote</th>
+            <th>Sector</th>
+            <th>Rack</th>
+            <th>Band.</th>
+            <th>Estadio</th>
+            <th>Temp.</th>
+            <th>Hum.</th>
+            <th>Operario</th>
+            <th>Mortalidad</th>
+            <th>Anomal&iacute;as</th>
+            <th>Cierre</th>
+            <th>Obs.</th>
+          </tr>
+        </thead>
+        <tbody id="logBody"></tbody>
+      </table>
+      <div class="empty" id="emptyMsg">Todav&iacute;a no hay registros cargados.</div>
+    </div>
+  </div>
+
+  <div class="note">
+    Datos de demostraci&oacute;n &middot; visibles para cualquiera con este enlace &middot; sin autenticaci&oacute;n
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'trazabilidad:entries:v2';
+let entries = [];
+
+// stamp live preview
+const rackInput = document.getElementById('rack');
+const bandejaInput = document.getElementById('bandeja');
+function updateStamp(){
+  const r = rackInput.value || '\u2014';
+  const b = bandejaInput.value || '\u2014';
+  document.getElementById('stampValue').textContent = `${r} / ${b}`;
+}
+rackInput.addEventListener('input', updateStamp);
+bandejaInput.addEventListener('change', updateStamp);
+
+// toggle -> detail field visibility
+document.querySelectorAll('input[data-detail]').forEach(cb => {
+  cb.addEventListener('change', () => {
+    const el = document.getElementById(cb.dataset.detail);
+    el.classList.toggle('show', cb.checked);
+  });
+});
+
+async function loadEntries(){
+  try{
+    const res = await window.storage.get(STORAGE_KEY, true);
+    entries = res && res.value ? JSON.parse(res.value) : [];
+  }catch(e){
+    entries = [];
+  }
+  render();
+}
+
+async function saveEntries(){
+  await window.storage.set(STORAGE_KEY, JSON.stringify(entries), true);
+}
+
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.textContent = str == null ? '' : str;
+  return d.innerHTML;
+}
+
+function flag(v){
+  return v ? '<span class="flag-yes">S\u00ed</span>' : '<span class="flag-no">No</span>';
+}
+
+function render(){
+  const tbody = document.getElementById('logBody');
+  const table = document.getElementById('logTable');
+  const empty = document.getElementById('emptyMsg');
+  const badge = document.getElementById('countBadge');
+  badge.textContent = entries.length;
+
+  if(entries.length === 0){
+    table.style.display = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+  table.style.display = 'table';
+  empty.style.display = 'none';
+
+  tbody.innerHTML = entries.slice().reverse().map(e => `
+    <tr>
+      <td>${e.fecha}</td>
+      <td>${escapeHtml(e.lote)}</td>
+      <td>${escapeHtml(e.sector)}</td>
+      <td class="num-cell">${escapeHtml(e.rack)}</td>
+      <td class="num-cell">${escapeHtml(e.bandeja)}</td>
+      <td>${escapeHtml(e.estadio)}</td>
+      <td class="num-cell">${escapeHtml(e.temperatura)}&deg;C</td>
+      <td class="num-cell">${escapeHtml(e.humedad)}%</td>
+      <td>${escapeHtml(e.operario)}</td>
+      <td>${flag(e.mortalidad)}</td>
+      <td>${flag(e.anomalias)}</td>
+      <td>${flag(e.cierreLote)}</td>
+      <td>${escapeHtml(e.observaciones || '-')}</td>
+    </tr>
+  `).join('');
+}
+
+document.getElementById('form').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  const status = document.getElementById('status');
+  btn.disabled = true;
+  status.className = 'status';
+  status.textContent = 'Enviando...';
+
+  const entry = {
+    fecha: new Date().toLocaleString('es-AR'),
+    operario: document.getElementById('operario').value.trim(),
+    sector: document.getElementById('sector').value,
+    rack: document.getElementById('rack').value,
+    bandeja: document.getElementById('bandeja').value,
+    lote: document.getElementById('lote').value.trim(),
+    estadio: document.getElementById('estadio').value,
+    temperatura: document.getElementById('temperatura').value,
+    humedad: document.getElementById('humedad').value,
+    recambioVeg: document.getElementById('recambioVeg').checked,
+    reposicionSustrato: document.getElementById('reposicionSustrato').checked,
+    mortalidad: document.getElementById('mortalidad').checked,
+    mortalidadDetalle: document.getElementById('mortalidadDetalle').value.trim(),
+    alteraciones: document.getElementById('alteraciones').checked,
+    alteracionesDetalle: document.getElementById('alteracionesDetalle').value.trim(),
+    anomalias: document.getElementById('anomalias').checked,
+    anomaliasDetalle: document.getElementById('anomaliasDetalle').value.trim(),
+    cierreLote: document.getElementById('cierreLote').checked,
+    observaciones: document.getElementById('observaciones').value.trim()
+  };
+
+  try{
+    entries.push(entry);
+    await saveEntries();
+    render();
+    document.getElementById('form').reset();
+    document.querySelectorAll('.detail-field').forEach(el => el.classList.remove('show'));
+    updateStamp();
+    status.textContent = 'Registro guardado correctamente.';
+  }catch(e){
+    entries.pop();
+    status.className = 'status err';
+    status.textContent = 'Error al guardar. Intentalo de nuevo.';
+  }finally{
+    btn.disabled = false;
+  }
+});
+
+document.getElementById('exportBtn').addEventListener('click', () => {
+  if(entries.length === 0) return;
+  const headers = ['Fecha','Operario','Sector','Rack','Bandeja','Lote','Estadio','Temperatura','Humedad',
+    'Recambio vegetales','Reposicion sustrato','Mortalidad','Detalle mortalidad',
+    'Alteraciones','Detalle alteraciones','Anomalias sanitarias','Detalle anomalias','Cierre de lote','Observaciones'];
+  const rows = entries.map(e => [
+    e.fecha, e.operario, e.sector, e.rack, e.bandeja, e.lote, e.estadio, e.temperatura, e.humedad,
+    e.recambioVeg ? 'Si' : 'No', e.reposicionSustrato ? 'Si' : 'No',
+    e.mortalidad ? 'Si' : 'No', e.mortalidadDetalle,
+    e.alteraciones ? 'Si' : 'No', e.alteracionesDetalle,
+    e.anomalias ? 'Si' : 'No', e.anomaliasDetalle,
+    e.cierreLote ? 'Si' : 'No', e.observaciones
+  ].map(v => `"${String(v ?? '').replace(/"/g,'""')}"`).join(','));
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'trazabilidad.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+loadEntries();
+</script>
+</body>
+</html>
