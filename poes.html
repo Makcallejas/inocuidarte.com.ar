@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Inocuidarte &middot; Registro de Limpieza y Sanitizaci&oacute;n (POES)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #fef3e6;
+    --paper: #fffcf7;
+    --paper-2: #fbf1e2;
+    --line: #e3d3ad;
+    --olive: #97a256;
+    --olive-dark: #717a3f;
+    --olive-deep: #545c2c;
+    --text: #555f83;
+    --text-dark: #3a4160;
+    --text-dim: #8890ab;
+    --warn: #b3592f;
+    --serif: 'Newsreader', Georgia, serif;
+    --sans: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+    --mono: 'IBM Plex Mono', 'Courier New', monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text-dark);
+    font-family:var(--sans);
+    padding:28px 16px 70px;
+  }
+  .wrap{max-width:740px;margin:0 auto;}
+
+  .header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:16px;
+    padding-bottom:20px;
+    margin-bottom:26px;
+    border-bottom:2px solid var(--olive);
+  }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:3px;
+    color:var(--olive-dark);
+    text-transform:uppercase;
+    margin-bottom:8px;
+  }
+  h1{
+    margin:0;
+    font-family:var(--serif);
+    font-weight:600;
+    font-size:27px;
+    color:var(--text-dark);
+    letter-spacing:-0.2px;
+  }
+  .sub{
+    color:var(--text-dim);
+    font-size:13px;
+    margin-top:8px;
+    max-width:46ch;
+    line-height:1.5;
+  }
+  .clock{
+    flex-shrink:0;
+    border:1.5px solid var(--olive);
+    background:var(--paper);
+    padding:10px 14px;
+    text-align:center;
+    min-width:104px;
+  }
+  .clock .label{
+    font-family:var(--mono);
+    font-size:9px;
+    letter-spacing:1.5px;
+    color:var(--text-dim);
+    text-transform:uppercase;
+  }
+  .clock .value{
+    font-family:var(--mono);
+    font-size:16px;
+    font-weight:600;
+    color:var(--olive-deep);
+    line-height:1.3;
+    margin-top:3px;
+  }
+  .clock .value .d{display:block;font-size:12px;color:var(--text-dim);font-weight:500;}
+
+  /* Sala badge (viene del QR) */
+  .sala-badge{
+    display:none;
+    align-items:center;
+    gap:10px;
+    background:var(--paper-2);
+    border:1px solid var(--olive);
+    padding:10px 16px;
+    margin-bottom:20px;
+    font-family:var(--mono);
+    font-size:12px;
+  }
+  .sala-badge.active{display:flex;}
+  .sala-badge .tag{
+    background:var(--olive-deep);
+    color:var(--paper);
+    padding:2px 8px;
+    font-size:10px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+  }
+
+  .login-panel{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-left:6px solid var(--olive);
+    padding:24px;
+    margin-bottom:20px;
+    text-align:center;
+  }
+  .login-panel h2{
+    font-family:var(--serif);
+    font-size:19px;
+    margin:0 0 6px;
+    color:var(--text-dark);
+  }
+  .login-panel p{
+    font-size:12.5px;
+    color:var(--text-dim);
+    margin:0 0 16px;
+  }
+  .login-row{
+    display:flex;
+    gap:10px;
+    max-width:360px;
+    margin:0 auto;
+  }
+  .login-row input{flex:1;}
+  .login-btn{
+    background:var(--olive-deep);
+    color:var(--paper);
+    border:none;
+    padding:0 18px;
+    font-family:var(--sans);
+    font-weight:600;
+    font-size:13px;
+    cursor:pointer;
+  }
+  .login-btn:hover{background:var(--olive-dark);}
+
+  .session-bar{
+    display:none;
+    align-items:center;
+    justify-content:space-between;
+    background:var(--paper-2);
+    border:1px solid var(--line);
+    padding:10px 16px;
+    margin-bottom:20px;
+    font-family:var(--mono);
+    font-size:12px;
+  }
+  .session-bar.active{display:flex;}
+  .session-bar .who{color:var(--text-dark);}
+  .session-bar .who b{color:var(--olive-deep);}
+  .session-bar button{
+    background:none;
+    border:none;
+    color:var(--text-dim);
+    text-decoration:underline;
+    cursor:pointer;
+    font-family:var(--mono);
+    font-size:11px;
+  }
+  .session-bar button:hover{color:var(--warn);}
+
+  #formArea{display:none;}
+  #formArea.active{display:block;}
+
+  .panel{
+    background:var(--paper);
+    border:1px solid var(--line);
+    padding:22px;
+    margin-bottom:18px;
+  }
+  .section-title{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    margin:0 0 18px;
+    padding-bottom:12px;
+    border-bottom:1px solid var(--line);
+  }
+  .section-num{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--olive-dark);
+    letter-spacing:1px;
+  }
+  .section-title h2{
+    margin:0;
+    font-family:var(--serif);
+    font-size:17px;
+    font-weight:600;
+    color:var(--text-dark);
+  }
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field.full{grid-column:1/-1;}
+  label{
+    font-size:12.5px;
+    color:var(--text);
+    font-weight:600;
+  }
+  label .unit{color:var(--text-dim);font-weight:400;font-family:var(--mono);font-size:11px;}
+  input, select, textarea{
+    background:var(--paper-2);
+    border:1px solid var(--line);
+    color:var(--text-dark);
+    padding:10px 12px;
+    font-size:14px;
+    font-family:var(--sans);
+    outline:none;
+    transition:border-color .15s, background .15s;
+    width:100%;
+  }
+  input:focus, select:focus, textarea:focus{border-color:var(--olive); background:var(--paper);}
+  textarea{resize:vertical;min-height:60px;font-family:var(--sans);}
+  input:disabled, select:disabled{color:var(--text-dim); background:var(--paper-2); opacity:.7;}
+
+  .measure{
+    display:flex;align-items:stretch;
+    border:1px solid var(--line);
+    background:var(--paper-2);
+  }
+  .measure input{border:none;background:transparent;flex:1;font-family:var(--mono);}
+  .measure .u{
+    display:flex;align-items:center;
+    padding:0 12px;
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--paper);
+    background:var(--olive-dark);
+    white-space:nowrap;
+  }
+
+  /* Pill radio group (tipo de limpieza) */
+  .pill-group{display:flex;gap:8px;flex-wrap:wrap;}
+  .pill{position:relative;}
+  .pill input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;}
+  .pill span{
+    display:inline-block;
+    padding:9px 16px;
+    border:1px solid var(--line);
+    background:var(--paper-2);
+    font-size:13px;
+    font-weight:600;
+    color:var(--text);
+    cursor:pointer;
+    transition:all .15s;
+  }
+  .pill input:checked ~ span{
+    background:var(--olive-deep);
+    border-color:var(--olive-deep);
+    color:var(--paper);
+  }
+
+  /* Checklist */
+  .checklist{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .check-item{position:relative;}
+  .check-item input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;z-index:2;}
+  .check-item .box{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:12px 14px;
+    border:1px solid var(--line);
+    background:var(--paper-2);
+    transition:all .15s;
+  }
+  .check-item .mark{
+    flex-shrink:0;
+    width:20px;height:20px;
+    border:1.5px solid var(--olive);
+    background:var(--paper);
+    display:flex;align-items:center;justify-content:center;
+    font-size:13px;
+    color:transparent;
+    transition:all .15s;
+  }
+  .check-item input:checked ~ .box{
+    background:var(--paper);
+    border-color:var(--olive);
+  }
+  .check-item input:checked ~ .box .mark{
+    background:var(--olive);
+    color:var(--paper);
+  }
+  .check-item .box span.label-text{font-size:13.5px;font-weight:600;color:var(--text-dark);}
+
+  .detail-field{
+    margin-top:8px;
+    padding:14px;
+    background:var(--paper-2);
+    border:1px dashed var(--line);
+    display:none;
+  }
+  .detail-field.show{display:block;}
+
+  button.submit{
+    width:100%;
+    padding:15px;
+    background:var(--olive-deep);
+    color:var(--paper);
+    border:none;
+    font-family:var(--sans);
+    font-weight:600;
+    font-size:14px;
+    letter-spacing:0.4px;
+    cursor:pointer;
+    transition:background .15s;
+    margin-top:6px;
+  }
+  button.submit:hover{background:var(--olive-dark);}
+  button.submit:disabled{background:var(--text-dim);cursor:default;}
+
+  .status{
+    font-family:var(--mono);
+    font-size:12px;
+    margin-top:10px;
+    min-height:16px;
+    color:var(--olive-dark);
+  }
+  .status.err{color:var(--warn);}
+
+  .log-head{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--line);
+  }
+  .count-badge{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--paper);
+    background:var(--olive-dark);
+    padding:3px 9px;
+  }
+  .export-btn{
+    background:transparent;
+    border:1px solid var(--olive);
+    color:var(--olive-deep);
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:1px;
+    padding:7px 12px;
+    cursor:pointer;
+    text-transform:uppercase;
+  }
+  .export-btn:hover{background:var(--olive);color:var(--paper);}
+
+  .table-scroll{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11.5px;}
+  th{
+    text-align:left;color:var(--text-dim);font-weight:600;padding:8px 10px;
+    border-bottom:1px solid var(--line);white-space:nowrap;text-transform:uppercase;
+    letter-spacing:0.4px;font-size:9.5px;
+  }
+  td{padding:8px 10px;border-bottom:1px solid var(--paper-2);white-space:nowrap;color:var(--text-dark);}
+  tr:hover td{background:var(--paper-2);}
+  .empty{padding:34px 10px;text-align:center;color:var(--text-dim);font-family:var(--mono);font-size:12px;}
+  .flag-yes{color:var(--warn);font-weight:600;}
+  .flag-no{color:var(--text-dim);}
+
+  .note{
+    font-family:var(--mono);font-size:11px;color:var(--text-dim);
+    margin-top:20px;text-align:center;line-height:1.7;
+  }
+
+  @media (max-width:560px){
+    .grid, .checklist{grid-template-columns:1fr;}
+    .header{flex-direction:column;align-items:flex-start;}
+    .login-row{flex-direction:column;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <div>
+      <div class="eyebrow">Inocuidarte</div>
+      <h1>Registro de Limpieza y Sanitizaci&oacute;n (POES)</h1>
+      <div class="sub">Procedimiento Operativo Estandarizado de Saneamiento &middot; control por sala.</div>
+    </div>
+    <div class="clock">
+      <div class="label">Fecha / Hora</div>
+      <div class="value" id="clockValue">&mdash;<span class="d" id="clockDate">&mdash;</span></div>
+    </div>
+  </div>
+
+  <div class="sala-badge" id="salaBadge">
+    <span class="tag">Sala</span>
+    <span id="salaNombre"></span>
+  </div>
+
+  <!-- LOGIN GATE -->
+  <div class="login-panel" id="loginPanel">
+    <h2>Identificaci&oacute;n de operario</h2>
+    <p>Ingres&aacute; tu ID para iniciar el registro. Quedar&aacute; asociado autom&aacute;ticamente a la carga.</p>
+    <div class="login-row">
+      <input type="text" id="loginInput" placeholder="ID o nombre de operario">
+      <button type="button" class="login-btn" id="loginBtn">Ingresar</button>
+    </div>
+  </div>
+
+  <div class="session-bar" id="sessionBar">
+    <span class="who">Registrando como <b id="sessionWho"></b></span>
+    <button type="button" id="logoutBtn">Cambiar operario</button>
+  </div>
+
+  <div id="formArea">
+    <form id="form">
+
+      <div class="panel">
+        <div class="section-title">
+          <span class="section-num">01</span>
+          <h2>Encabezado</h2>
+        </div>
+        <div class="grid">
+          <div class="field">
+            <label>Sector / Sala</label>
+            <select id="sector">
+              <option>Reproducci&oacute;n</option>
+              <option>Incubaci&oacute;n</option>
+              <option>Engorde</option>
+              <option>Prepupa / Cosecha</option>
+              <option>Procesamiento</option>
+              <option>Vestuarios / Ingreso</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Tipo de limpieza</label>
+            <div class="pill-group" style="margin-top:4px;">
+              <label class="pill"><input type="radio" name="tipoLimpieza" value="Rutina" checked><span>Rutina</span></label>
+              <label class="pill"><input type="radio" name="tipoLimpieza" value="Profunda"><span>Profunda</span></label>
+              <label class="pill"><input type="radio" name="tipoLimpieza" value="Extraordinaria"><span>Extraordinaria</span></label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="section-title">
+          <span class="section-num">02</span>
+          <h2>Checklist de limpieza</h2>
+        </div>
+        <div class="checklist">
+          <label class="check-item"><input type="checkbox" value="Piso"><span class="box"><span class="mark">&#10003;</span><span class="label-text">Piso</span></span></label>
+          <label class="check-item"><input type="checkbox" value="Paredes"><span class="box"><span class="mark">&#10003;</span><span class="label-text">Paredes</span></span></label>
+          <label class="check-item"><input type="checkbox" value="Mesadas"><span class="box"><span class="mark">&#10003;</span><span class="label-text">Mesadas</span></span></label>
+          <label class="check-item"><input type="checkbox" value="Bandejas"><span class="box"><span class="mark">&#10003;</span><span class="label-text">Bandejas</span></span></label>
+          <label class="check-item"><input type="checkbox" value="Racks"><span class="box"><span class="mark">&#10003;</span><span class="label-text">Racks</span></span></label>
+          <label class="check-item"><input type="checkbox" value="Equipos"><span class="box"><span class="mark">&#10003;</span><span class="label-text">Equipos</span></span></label>
+          <label class="check-item"><input type="checkbox" value="Desag\u00fces"><span class="box"><span class="mark">&#10003;</span><span class="label-text">Desag&uuml;es</span></span></label>
+          <label class="check-item"><input type="checkbox" value="Lavamanos"><span class="box"><span class="mark">&#10003;</span><span class="label-text">Lavamanos</span></span></label>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="section-title">
+          <span class="section-num">03</span>
+          <h2>Producto y tiempo de contacto</h2>
+        </div>
+        <div class="grid">
+          <div class="field">
+            <label>Producto utilizado</label>
+            <input type="text" id="producto" placeholder="Ej: Hipoclorito de sodio 100ppm" required>
+          </div>
+          <div class="field">
+            <label>Tiempo de contacto</label>
+            <div class="measure">
+              <input type="number" step="1" id="tiempoContacto" placeholder="0">
+              <span class="u">min</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="section-title">
+          <span class="section-num">04</span>
+          <h2>Anomal&iacute;as detectadas</h2>
+        </div>
+        <div class="checklist">
+          <label class="check-item"><input type="checkbox" class="anomalia-check" value="Restos org\u00e1nicos"><span class="box"><span class="mark">&#10003;</span><span class="label-text">Restos org&aacute;nicos</span></span></label>
+          <label class="check-item"><input type="checkbox" class="anomalia-check" value="Hongos"><span class="box"><span class="mark">&#10003;</span><span class="label-text">Hongos</span></span></label>
+          <label class="check-item"><input type="checkbox" class="anomalia-check" value="Olores"><span class="box"><span class="mark">&#10003;</span><span class="label-text">Olores</span></span></label>
+          <label class="check-item"><input type="checkbox" class="anomalia-check" value="Derrames"><span class="box"><span class="mark">&#10003;</span><span class="label-text">Derrames</span></span></label>
+          <label class="check-item"><input type="checkbox" class="anomalia-check" value="Plagas"><span class="box"><span class="mark">&#10003;</span><span class="label-text">Plagas</span></span></label>
+          <label class="check-item"><input type="checkbox" class="anomalia-check" value="Otra" id="anomaliaOtra"><span class="box"><span class="mark">&#10003;</span><span class="label-text">Otra</span></span></label>
+        </div>
+        <div class="detail-field" id="detalleAnomaliaOtra">
+          <input type="text" id="anomaliaOtraTexto" placeholder="Especificar anomal&iacute;a">
+        </div>
+
+        <div class="field full" style="margin-top:16px;">
+          <label>Observaciones</label>
+          <textarea id="observaciones" placeholder="Opcional"></textarea>
+        </div>
+      </div>
+
+      <div class="panel">
+        <button type="submit" class="submit" id="submitBtn">Enviar registro</button>
+        <div class="status" id="status"></div>
+      </div>
+    </form>
+  </div>
+
+  <div class="panel">
+    <div class="log-head">
+      <div class="section-title" style="border:none;padding:0;margin:0;">
+        <span class="section-num">05</span>
+        <h2>Historial de registros</h2>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span class="count-badge" id="countBadge">0</span>
+        <button type="button" class="export-btn" id="exportBtn">Exportar CSV</button>
+      </div>
+    </div>
+    <div class="table-scroll">
+      <table id="logTable" style="display:none;">
+        <thead>
+          <tr>
+            <th>Fecha</th><th>Hora</th><th>Operario</th><th>Sector</th><th>Tipo</th>
+            <th>Checklist</th><th>Producto</th><th>T. contacto</th><th>Anomal&iacute;as</th><th>Obs.</th>
+          </tr>
+        </thead>
+        <tbody id="logBody"></tbody>
+      </table>
+      <div class="empty" id="emptyMsg">Todav&iacute;a no hay registros cargados.</div>
+    </div>
+  </div>
+
+  <div class="note">
+    Datos de demostraci&oacute;n &middot; visibles para cualquiera con este enlace &middot; sin autenticaci&oacute;n real<br>
+    Para generar el QR de cada sala, agreg&aacute; <b>?sector=NombreDeLaSala</b> al final del link antes de crear el c&oacute;digo.
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'poes:entries:v1';
+let entries = [];
+let currentOperario = null;
+
+// Compatibilidad de almacenamiento: window.storage (Claude) o localStorage (afuera)
+const hasClaudeStorage = typeof window.storage !== 'undefined' && window.storage !== null;
+async function storageGet(key){
+  if(hasClaudeStorage) return window.storage.get(key, true);
+  try{
+    const raw = localStorage.getItem(key);
+    return raw ? { key, value: raw, shared: true } : null;
+  }catch(e){ return null; }
+}
+async function storageSet(key, value){
+  if(hasClaudeStorage) return window.storage.set(key, value, true);
+  try{
+    localStorage.setItem(key, value);
+    return { key, value, shared: true };
+  }catch(e){ return null; }
+}
+
+// Sala desde el QR (?sector=...)
+const params = new URLSearchParams(location.search);
+const qrSector = params.get('sector');
+if(qrSector){
+  const sel = document.getElementById('sector');
+  let found = Array.from(sel.options).some(o => o.value === qrSector);
+  if(!found){
+    const opt = document.createElement('option');
+    opt.value = qrSector; opt.textContent = qrSector;
+    sel.appendChild(opt);
+  }
+  sel.value = qrSector;
+  sel.disabled = true;
+  document.getElementById('salaNombre').textContent = qrSector;
+  document.getElementById('salaBadge').classList.add('active');
+}
+
+// Reloj en vivo
+function tick(){
+  const now = new Date();
+  document.getElementById('clockValue').innerHTML =
+    now.toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'}) +
+    '<span class="d">' + now.toLocaleDateString('es-AR') + '</span>';
+}
+tick();
+setInterval(tick, 1000 * 30);
+
+// Login
+document.getElementById('loginBtn').addEventListener('click', () => {
+  const val = document.getElementById('loginInput').value.trim();
+  if(!val) return;
+  currentOperario = val;
+  document.getElementById('sessionWho').textContent = val;
+  document.getElementById('sessionBar').classList.add('active');
+  document.getElementById('loginPanel').style.display = 'none';
+  document.getElementById('formArea').classList.add('active');
+});
+document.getElementById('loginInput').addEventListener('keydown', (e) => {
+  if(e.key === 'Enter'){ e.preventDefault(); document.getElementById('loginBtn').click(); }
+});
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  currentOperario = null;
+  document.getElementById('sessionBar').classList.remove('active');
+  document.getElementById('formArea').classList.remove('active');
+  document.getElementById('loginPanel').style.display = 'block';
+  document.getElementById('loginInput').value = '';
+});
+
+// "Otra" anomalia -> detalle
+document.getElementById('anomaliaOtra').addEventListener('change', (e) => {
+  document.getElementById('detalleAnomaliaOtra').classList.toggle('show', e.target.checked);
+});
+
+async function loadEntries(){
+  try{
+    const res = await storageGet(STORAGE_KEY);
+    entries = res && res.value ? JSON.parse(res.value) : [];
+  }catch(e){
+    entries = [];
+  }
+  render();
+}
+async function saveEntries(){
+  await storageSet(STORAGE_KEY, JSON.stringify(entries));
+}
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.textContent = str == null ? '' : str;
+  return d.innerHTML;
+}
+
+function render(){
+  const tbody = document.getElementById('logBody');
+  const table = document.getElementById('logTable');
+  const empty = document.getElementById('emptyMsg');
+  document.getElementById('countBadge').textContent = entries.length;
+
+  if(entries.length === 0){
+    table.style.display = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+  table.style.display = 'table';
+  empty.style.display = 'none';
+
+  tbody.innerHTML = entries.slice().reverse().map(e => `
+    <tr>
+      <td>${e.fechaStr}</td>
+      <td>${e.horaStr}</td>
+      <td>${escapeHtml(e.operario)}</td>
+      <td>${escapeHtml(e.sector)}</td>
+      <td>${escapeHtml(e.tipoLimpieza)}</td>
+      <td>${escapeHtml(e.checklist.join(', ') || '-')}</td>
+      <td>${escapeHtml(e.producto)}</td>
+      <td>${e.tiempoContacto ? escapeHtml(e.tiempoContacto) + ' min' : '-'}</td>
+      <td>${e.anomalias.length ? '<span class="flag-yes">' + escapeHtml(e.anomalias.join(', ')) + '</span>' : '<span class="flag-no">Ninguna</span>'}</td>
+      <td>${escapeHtml(e.observaciones || '-')}</td>
+    </tr>
+  `).join('');
+}
+
+document.getElementById('form').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  const status = document.getElementById('status');
+  btn.disabled = true;
+  status.className = 'status';
+  status.textContent = 'Enviando...';
+
+  const now = new Date();
+  const checklist = Array.from(document.querySelectorAll('.checklist input[type="checkbox"]:not(.anomalia-check):checked')).map(el => el.value);
+  const anomalias = Array.from(document.querySelectorAll('.anomalia-check:checked')).map(el => {
+    if(el.value === 'Otra'){
+      const detalle = document.getElementById('anomaliaOtraTexto').value.trim();
+      return detalle ? `Otra: ${detalle}` : 'Otra';
+    }
+    return el.value;
+  });
+  const tipoLimpiezaEl = document.querySelector('input[name="tipoLimpieza"]:checked');
+
+  const entry = {
+    fechaStr: now.toLocaleDateString('es-AR'),
+    horaStr: now.toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'}),
+    operario: currentOperario,
+    sector: document.getElementById('sector').value,
+    tipoLimpieza: tipoLimpiezaEl ? tipoLimpiezaEl.value : '',
+    checklist: checklist,
+    producto: document.getElementById('producto').value.trim(),
+    tiempoContacto: document.getElementById('tiempoContacto').value,
+    anomalias: anomalias,
+    observaciones: document.getElementById('observaciones').value.trim()
+  };
+
+  try{
+    entries.push(entry);
+    await saveEntries();
+    render();
+    document.getElementById('form').reset();
+    if(qrSector){ document.getElementById('sector').value = qrSector; document.getElementById('sector').disabled = true; }
+    document.getElementById('detalleAnomaliaOtra').classList.remove('show');
+    status.textContent = 'Registro guardado correctamente.';
+  }catch(e){
+    entries.pop();
+    status.className = 'status err';
+    status.textContent = 'Error al guardar. Intentalo de nuevo.';
+  }finally{
+    btn.disabled = false;
+  }
+});
+
+document.getElementById('exportBtn').addEventListener('click', () => {
+  if(entries.length === 0) return;
+  const headers = ['Fecha','Hora','Operario','Sector','Tipo de limpieza','Checklist','Producto utilizado','Tiempo de contacto (min)','Anomalias','Observaciones'];
+  const rows = entries.map(e => [
+    e.fechaStr, e.horaStr, e.operario, e.sector, e.tipoLimpieza,
+    e.checklist.join(' | '), e.producto, e.tiempoContacto,
+    e.anomalias.join(' | '), e.observaciones
+  ].map(v => `"${String(v ?? '').replace(/"/g,'""')}"`).join(','));
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'poes.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+loadEntries();
+</script>
+</body>
+</html>
