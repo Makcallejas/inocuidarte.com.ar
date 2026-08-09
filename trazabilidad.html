@@ -643,9 +643,37 @@ document.getElementById('correctivaNo').addEventListener('change', () => {
   document.getElementById('correctivaDetalle').classList.remove('show');
 });
 
+// Capa de compatibilidad: usa window.storage si existe (entorno Claude),
+// y si no, cae a localStorage (para cuando el archivo se aloja afuera,
+// por ejemplo en Netlify, Vercel o GitHub Pages).
+const hasClaudeStorage = typeof window.storage !== 'undefined' && window.storage !== null;
+
+async function storageGet(key){
+  if(hasClaudeStorage){
+    return window.storage.get(key, true);
+  }
+  try{
+    const raw = localStorage.getItem(key);
+    return raw ? { key, value: raw, shared: true } : null;
+  }catch(e){
+    return null;
+  }
+}
+async function storageSet(key, value){
+  if(hasClaudeStorage){
+    return window.storage.set(key, value, true);
+  }
+  try{
+    localStorage.setItem(key, value);
+    return { key, value, shared: true };
+  }catch(e){
+    return null;
+  }
+}
+
 async function loadEntries(){
   try{
-    const res = await window.storage.get(STORAGE_KEY, true);
+    const res = await storageGet(STORAGE_KEY);
     entries = res && res.value ? JSON.parse(res.value) : [];
   }catch(e){
     entries = [];
@@ -653,7 +681,7 @@ async function loadEntries(){
   render();
 }
 async function saveEntries(){
-  await window.storage.set(STORAGE_KEY, JSON.stringify(entries), true);
+  await storageSet(STORAGE_KEY, JSON.stringify(entries));
 }
 function escapeHtml(str){
   const d = document.createElement('div');
