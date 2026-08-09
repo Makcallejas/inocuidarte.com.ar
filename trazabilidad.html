@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Sistema de Trazabilidad y Registros</title>
+<title>Inocuidarte &middot; Sistema Digital de Gesti&oacute;n de Producci&oacute;n</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -54,7 +54,7 @@
     margin:0;
     font-family:var(--serif);
     font-weight:600;
-    font-size:30px;
+    font-size:29px;
     color:var(--text-dark);
     letter-spacing:-0.2px;
   }
@@ -65,31 +65,97 @@
     max-width:46ch;
     line-height:1.5;
   }
-
-  /* Stamp: rack/bandeja identification badge */
-  .stamp{
+  .clock{
     flex-shrink:0;
     border:1.5px solid var(--olive);
     background:var(--paper);
     padding:10px 14px;
     text-align:center;
-    min-width:96px;
+    min-width:104px;
   }
-  .stamp .label{
+  .clock .label{
     font-family:var(--mono);
     font-size:9px;
     letter-spacing:1.5px;
     color:var(--text-dim);
     text-transform:uppercase;
   }
-  .stamp .value{
-    font-family:var(--serif);
-    font-size:22px;
+  .clock .value{
+    font-family:var(--mono);
+    font-size:16px;
     font-weight:600;
     color:var(--olive-deep);
-    line-height:1.2;
-    margin-top:2px;
+    line-height:1.3;
+    margin-top:3px;
   }
+  .clock .value .d{display:block;font-size:12px;color:var(--text-dim);font-weight:500;}
+
+  /* Login gate */
+  .login-panel{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-left:6px solid var(--olive);
+    padding:24px;
+    margin-bottom:20px;
+    text-align:center;
+  }
+  .login-panel h2{
+    font-family:var(--serif);
+    font-size:19px;
+    margin:0 0 6px;
+    color:var(--text-dark);
+  }
+  .login-panel p{
+    font-size:12.5px;
+    color:var(--text-dim);
+    margin:0 0 16px;
+  }
+  .login-row{
+    display:flex;
+    gap:10px;
+    max-width:360px;
+    margin:0 auto;
+  }
+  .login-row input{flex:1;}
+  .login-btn{
+    background:var(--olive-deep);
+    color:var(--paper);
+    border:none;
+    padding:0 18px;
+    font-family:var(--sans);
+    font-weight:600;
+    font-size:13px;
+    cursor:pointer;
+  }
+  .login-btn:hover{background:var(--olive-dark);}
+
+  .session-bar{
+    display:none;
+    align-items:center;
+    justify-content:space-between;
+    background:var(--paper-2);
+    border:1px solid var(--line);
+    padding:10px 16px;
+    margin-bottom:20px;
+    font-family:var(--mono);
+    font-size:12px;
+  }
+  .session-bar.active{display:flex;}
+  .session-bar .who{color:var(--text-dark);}
+  .session-bar .who b{color:var(--olive-deep);}
+  .session-bar button{
+    background:none;
+    border:none;
+    color:var(--text-dim);
+    text-decoration:underline;
+    cursor:pointer;
+    font-family:var(--mono);
+    font-size:11px;
+  }
+  .session-bar button:hover{color:var(--warn);}
+
+  #formArea{display:none;}
+  #formArea.active{display:block;}
 
   .panel{
     background:var(--paper);
@@ -120,7 +186,6 @@
   }
 
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
   .field{display:flex;flex-direction:column;gap:6px;}
   .field.full{grid-column:1/-1;}
   label{
@@ -143,6 +208,7 @@
   input:focus, select:focus, textarea:focus{border-color:var(--olive); background:var(--paper);}
   textarea{resize:vertical;min-height:60px;font-family:var(--sans);}
   input[type="number"]{font-family:var(--mono);}
+  input:disabled{color:var(--text-dim);}
 
   .measure{
     display:flex;align-items:stretch;
@@ -160,7 +226,7 @@
     white-space:nowrap;
   }
 
-  /* Toggle rows for confirmations */
+  /* Toggle rows */
   .toggle-row{
     display:flex;
     align-items:center;
@@ -174,32 +240,50 @@
   .toggle-row:last-child{margin-bottom:0;}
   .toggle-text{display:flex;flex-direction:column;gap:2px;}
   .toggle-text .t-label{font-size:13px;font-weight:600;color:var(--text-dark);}
-  .toggle-text .t-desc{font-size:11.5px;color:var(--text-dim);}
-  .switch{
-    position:relative;
-    width:44px;height:24px;
-    flex-shrink:0;
-  }
+  .switch{position:relative;width:44px;height:24px;flex-shrink:0;}
   .switch input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;z-index:2;}
-  .switch .track{
-    position:absolute;inset:0;
-    background:var(--line);
-    transition:background .15s;
-  }
-  .switch .thumb{
-    position:absolute;top:3px;left:3px;
-    width:18px;height:18px;
-    background:var(--paper);
-    transition:transform .15s;
-  }
+  .switch .track{position:absolute;inset:0;background:var(--line);transition:background .15s;}
+  .switch .thumb{position:absolute;top:3px;left:3px;width:18px;height:18px;background:var(--paper);transition:transform .15s;}
   .switch input:checked ~ .track{background:var(--olive);}
   .switch input:checked ~ .thumb{transform:translateX(20px);}
 
   .detail-field{
     margin-top:8px;
+    padding:14px;
+    background:var(--paper-2);
+    border:1px dashed var(--line);
     display:none;
   }
   .detail-field.show{display:block;}
+  .detail-field .grid{margin-top:0;}
+
+  /* Pill radio group */
+  .pill-group{display:flex;gap:8px;flex-wrap:wrap;}
+  .pill{
+    position:relative;
+  }
+  .pill input{
+    position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;
+  }
+  .pill span{
+    display:inline-block;
+    padding:9px 16px;
+    border:1px solid var(--line);
+    background:var(--paper-2);
+    font-size:13px;
+    font-weight:600;
+    color:var(--text);
+    cursor:pointer;
+    transition:all .15s;
+  }
+  .pill input:checked ~ span{
+    background:var(--olive-deep);
+    border-color:var(--olive-deep);
+    color:var(--paper);
+  }
+
+  .corrective-panel{border-left:6px solid var(--warn);}
+  .corrective-panel .section-title h2{color:var(--warn);}
 
   button.submit{
     width:100%;
@@ -227,7 +311,6 @@
   }
   .status.err{color:var(--warn);}
 
-  /* Log */
   .log-head{
     display:flex;justify-content:space-between;align-items:center;
     margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--line);
@@ -255,46 +338,26 @@
   .table-scroll{overflow-x:auto;}
   table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11.5px;}
   th{
-    text-align:left;
-    color:var(--text-dim);
-    font-weight:600;
-    padding:8px 10px;
-    border-bottom:1px solid var(--line);
-    white-space:nowrap;
-    text-transform:uppercase;
-    letter-spacing:0.4px;
-    font-size:9.5px;
+    text-align:left;color:var(--text-dim);font-weight:600;padding:8px 10px;
+    border-bottom:1px solid var(--line);white-space:nowrap;text-transform:uppercase;
+    letter-spacing:0.4px;font-size:9.5px;
   }
-  td{
-    padding:8px 10px;
-    border-bottom:1px solid var(--paper-2);
-    white-space:nowrap;
-    color:var(--text-dark);
-  }
+  td{padding:8px 10px;border-bottom:1px solid var(--paper-2);white-space:nowrap;color:var(--text-dark);}
   tr:hover td{background:var(--paper-2);}
-  .empty{
-    padding:34px 10px;
-    text-align:center;
-    color:var(--text-dim);
-    font-family:var(--mono);
-    font-size:12px;
-  }
+  .empty{padding:34px 10px;text-align:center;color:var(--text-dim);font-family:var(--mono);font-size:12px;}
   .num-cell{color:var(--olive-deep);font-weight:600;}
   .flag-yes{color:var(--warn);font-weight:600;}
   .flag-no{color:var(--text-dim);}
 
   .note{
-    font-family:var(--mono);
-    font-size:11px;
-    color:var(--text-dim);
-    margin-top:20px;
-    text-align:center;
-    line-height:1.7;
+    font-family:var(--mono);font-size:11px;color:var(--text-dim);
+    margin-top:20px;text-align:center;line-height:1.7;
   }
 
   @media (max-width:560px){
-    .grid, .grid-3{grid-template-columns:1fr;}
+    .grid{grid-template-columns:1fr;}
     .header{flex-direction:column;align-items:flex-start;}
+    .login-row{flex-direction:column;}
   }
 </style>
 </head>
@@ -303,197 +366,207 @@
 
   <div class="header">
     <div>
-      <div class="eyebrow">Planta piloto &middot; anexo de tesis</div>
-      <h1>Sistema de Trazabilidad y Registros</h1>
+      <div class="eyebrow">Inocuidarte</div>
+      <h1>Sistema Digital de Gesti&oacute;n de Producci&oacute;n</h1>
       <div class="sub">Seguimiento de lote desde el ingreso al sector de engorde hasta la obtenci&oacute;n del producto final.</div>
     </div>
-    <div class="stamp">
-      <div class="label">Rack / Bandeja</div>
-      <div class="value" id="stampValue">&mdash; / &mdash;</div>
+    <div class="clock">
+      <div class="label">Fecha / Hora</div>
+      <div class="value" id="clockValue">&mdash;<span class="d" id="clockDate">&mdash;</span></div>
     </div>
   </div>
 
-  <form id="form">
-
-    <div class="panel">
-      <div class="section-title">
-        <span class="section-num">01</span>
-        <h2>Identificaci&oacute;n</h2>
-      </div>
-      <div class="grid">
-        <div class="field">
-          <label>Operario responsable</label>
-          <input type="text" id="operario" placeholder="ID o nombre" required>
-        </div>
-        <div class="field">
-          <label>Sector de producci&oacute;n</label>
-          <select id="sector">
-            <option>Reproducci&oacute;n</option>
-            <option>Incubaci&oacute;n</option>
-            <option>Engorde</option>
-            <option>Prepupa / Cosecha</option>
-            <option>Procesamiento</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>Rack <span class="unit">1&ndash;64</span></label>
-          <input type="number" id="rack" min="1" max="64" placeholder="Ej: 12" required>
-        </div>
-        <div class="field">
-          <label>Bandeja <span class="unit">A&ndash;J</span></label>
-          <select id="bandeja" required>
-            <option value="">Seleccionar</option>
-            <option>A</option><option>B</option><option>C</option><option>D</option><option>E</option>
-            <option>F</option><option>G</option><option>H</option><option>I</option><option>J</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>N&deg; de lote</label>
-          <input type="text" id="lote" placeholder="Ej: L-0824" required>
-        </div>
-        <div class="field">
-          <label>Estadio biol&oacute;gico</label>
-          <select id="estadio">
-            <option>Huevo</option>
-            <option>Larva</option>
-            <option>Prepupa</option>
-            <option>Pupa</option>
-            <option>Adulto</option>
-          </select>
-        </div>
-      </div>
+  <!-- LOGIN GATE -->
+  <div class="login-panel" id="loginPanel">
+    <h2>Identificaci&oacute;n de operario</h2>
+    <p>Ingres&aacute; tu ID para iniciar el turno. Quedar&aacute; asociado autom&aacute;ticamente a cada registro que cargues.</p>
+    <div class="login-row">
+      <input type="text" id="loginInput" placeholder="ID o nombre de operario">
+      <button type="button" class="login-btn" id="loginBtn">Iniciar turno</button>
     </div>
+  </div>
 
-    <div class="panel">
-      <div class="section-title">
-        <span class="section-num">02</span>
-        <h2>Condiciones ambientales</h2>
-      </div>
-      <div class="grid">
-        <div class="field">
-          <label>Temperatura ambiental</label>
-          <div class="measure">
-            <input type="number" step="0.1" id="temperatura" placeholder="0.0" required>
-            <span class="u">&deg;C</span>
-          </div>
+  <div class="session-bar" id="sessionBar">
+    <span class="who">Turno iniciado por <b id="sessionWho"></b></span>
+    <button type="button" id="logoutBtn">Cerrar turno</button>
+  </div>
+
+  <div id="formArea">
+    <form id="form">
+
+      <div class="panel">
+        <div class="section-title">
+          <span class="section-num">01</span>
+          <h2>Encabezado</h2>
         </div>
-        <div class="field">
-          <label>Humedad relativa</label>
-          <div class="measure">
-            <input type="number" step="0.1" id="humedad" placeholder="0.0" required>
-            <span class="u">%HR</span>
+        <div class="grid">
+          <div class="field">
+            <label>Sector</label>
+            <select id="sector">
+              <option>Reproducci&oacute;n</option>
+              <option>Incubaci&oacute;n</option>
+              <option>Engorde</option>
+              <option>Prepupa / Cosecha</option>
+              <option>Procesamiento</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Lote</label>
+            <input type="text" id="lote" placeholder="Ej: L-0824" required>
+          </div>
+          <div class="field">
+            <label>Rack <span class="unit">1&ndash;64</span></label>
+            <input type="number" id="rack" min="1" max="64" placeholder="Ej: 12" required>
+          </div>
+          <div class="field">
+            <label>Bandeja <span class="unit">A&ndash;J</span></label>
+            <select id="bandeja" required>
+              <option value="">Seleccionar</option>
+              <option>A</option><option>B</option><option>C</option><option>D</option><option>E</option>
+              <option>F</option><option>G</option><option>H</option><option>I</option><option>J</option>
+            </select>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="panel">
-      <div class="section-title">
-        <span class="section-num">03</span>
-        <h2>Actividades de manejo</h2>
-      </div>
-      <div class="toggle-row">
-        <div class="toggle-text">
-          <span class="t-label">Recambio de vegetales</span>
-          <span class="t-desc">Confirmar si se realiz&oacute; durante este registro</span>
+      <div class="panel">
+        <div class="section-title">
+          <span class="section-num">02</span>
+          <h2>Estado de la colonia</h2>
         </div>
-        <label class="switch">
-          <input type="checkbox" id="recambioVeg">
-          <span class="track"></span><span class="thumb"></span>
-        </label>
-      </div>
-      <div class="toggle-row">
-        <div class="toggle-text">
-          <span class="t-label">Reposici&oacute;n de sustrato</span>
-          <span class="t-desc">Confirmar si se realiz&oacute; durante este registro</span>
+        <div class="grid">
+          <div class="field">
+            <label>Estadio biol&oacute;gico</label>
+            <select id="estadio">
+              <option>Huevo</option>
+              <option>Larva</option>
+              <option>Prepupa</option>
+              <option>Pupa</option>
+              <option>Adulto</option>
+            </select>
+          </div>
+          <div class="field"></div>
+          <div class="field">
+            <label>Temperatura</label>
+            <div class="measure">
+              <input type="number" step="0.1" id="temperatura" placeholder="0.0" required>
+              <span class="u">&deg;C</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>Humedad relativa</label>
+            <div class="measure">
+              <input type="number" step="0.1" id="humedad" placeholder="0.0" required>
+              <span class="u">%HR</span>
+            </div>
+          </div>
         </div>
-        <label class="switch">
-          <input type="checkbox" id="reposicionSustrato">
-          <span class="track"></span><span class="thumb"></span>
-        </label>
-      </div>
-    </div>
 
-    <div class="panel">
-      <div class="section-title">
-        <span class="section-num">04</span>
-        <h2>Estado sanitario</h2>
-      </div>
-      <div class="toggle-row">
-        <div class="toggle-text">
-          <span class="t-label">Presencia de mortalidad</span>
-          <span class="t-desc">Marcar si se observaron individuos muertos</span>
+        <div style="margin-top:14px;">
+          <div class="toggle-row">
+            <div class="toggle-text"><span class="t-label">Recambio de vegetales</span></div>
+            <label class="switch"><input type="checkbox" id="recambioVeg"><span class="track"></span><span class="thumb"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-text"><span class="t-label">Reposici&oacute;n de sustrato</span></div>
+            <label class="switch"><input type="checkbox" id="reposicionSustrato"><span class="track"></span><span class="thumb"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-text"><span class="t-label">Mortandad</span></div>
+            <label class="switch"><input type="checkbox" id="mortandad" data-detail="detalleMortandad"><span class="track"></span><span class="thumb"></span></label>
+          </div>
+          <div class="detail-field" id="detalleMortandad">
+            <div class="grid">
+              <div class="field">
+                <label>Cantidad estimada</label>
+                <input type="text" id="mortandadCantidad" placeholder="Ej: ~15 individuos">
+              </div>
+              <div class="field">
+                <label>Observaciones</label>
+                <input type="text" id="mortandadObs" placeholder="Zona, posible causa, etc.">
+              </div>
+            </div>
+          </div>
+
+          <div class="toggle-row">
+            <div class="toggle-text"><span class="t-label">Hongos</span></div>
+            <label class="switch"><input type="checkbox" id="hongos"><span class="track"></span><span class="thumb"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-text"><span class="t-label">&Aacute;caros</span></div>
+            <label class="switch"><input type="checkbox" id="acaros"><span class="track"></span><span class="thumb"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-text"><span class="t-label">Otras plagas</span></div>
+            <label class="switch"><input type="checkbox" id="otrasPlagas"><span class="track"></span><span class="thumb"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-text"><span class="t-label">Alteraci&oacute;n de comportamiento</span></div>
+            <label class="switch"><input type="checkbox" id="alteracion"><span class="track"></span><span class="thumb"></span></label>
+          </div>
         </div>
-        <label class="switch">
-          <input type="checkbox" id="mortalidad" data-detail="detalleMortalidad">
-          <span class="track"></span><span class="thumb"></span>
-        </label>
-      </div>
-      <div class="detail-field" id="detalleMortalidad">
-        <input type="text" id="mortalidadDetalle" placeholder="Detalle: cantidad estimada / zona de la bandeja">
-      </div>
 
-      <div class="toggle-row">
-        <div class="toggle-text">
-          <span class="t-label">Alteraciones de comportamiento o motilidad</span>
-          <span class="t-desc">Movimiento anormal, letargo, agrupamiento at&iacute;pico</span>
+        <div class="field full" style="margin-top:14px;">
+          <label>Observaciones generales</label>
+          <textarea id="observaciones" placeholder="Opcional"></textarea>
         </div>
-        <label class="switch">
-          <input type="checkbox" id="alteraciones" data-detail="detalleAlteraciones">
-          <span class="track"></span><span class="thumb"></span>
-        </label>
-      </div>
-      <div class="detail-field" id="detalleAlteraciones">
-        <input type="text" id="alteracionesDetalle" placeholder="Detalle de la alteraci\u00f3n observada">
       </div>
 
-      <div class="toggle-row">
-        <div class="toggle-text">
-          <span class="t-label">Hongos, &aacute;caros u otras anomal&iacute;as sanitarias</span>
-          <span class="t-desc">Presencia visible de contaminaci&oacute;n o plagas</span>
+      <div class="panel corrective-panel">
+        <div class="section-title">
+          <span class="section-num">&#128680;</span>
+          <h2>Acciones correctivas</h2>
         </div>
-        <label class="switch">
-          <input type="checkbox" id="anomalias" data-detail="detalleAnomalias">
-          <span class="track"></span><span class="thumb"></span>
-        </label>
-      </div>
-      <div class="detail-field" id="detalleAnomalias">
-        <input type="text" id="anomaliasDetalle" placeholder="Detalle: tipo de anomal\u00eda observada">
-      </div>
-    </div>
 
-    <div class="panel">
-      <div class="section-title">
-        <span class="section-num">05</span>
-        <h2>Cierre y observaciones</h2>
-      </div>
-      <div class="toggle-row">
-        <div class="toggle-text">
-          <span class="t-label">Finalizaci&oacute;n del ciclo y cosecha del lote</span>
-          <span class="t-desc">Marcar si este registro corresponde al cierre del lote</span>
+        <div class="field">
+          <label>&iquest;Se aplic&oacute; una acci&oacute;n correctiva?</label>
+          <div class="pill-group" style="margin-top:4px;">
+            <label class="pill"><input type="radio" name="correctiva" value="no" id="correctivaNo" checked><span>No</span></label>
+            <label class="pill"><input type="radio" name="correctiva" value="si" id="correctivaSi"><span>S&iacute;</span></label>
+          </div>
         </div>
-        <label class="switch">
-          <input type="checkbox" id="cierreLote">
-          <span class="track"></span><span class="thumb"></span>
-        </label>
-      </div>
-      <div class="field full" style="margin-top:14px;">
-        <label>Observaciones generales</label>
-        <textarea id="observaciones" placeholder="Opcional"></textarea>
+
+        <div class="detail-field" id="correctivaDetalle" style="margin-top:16px;">
+          <div class="field">
+            <label>Tipo de acci&oacute;n</label>
+            <select id="tipoAccion">
+              <option>Retiro de vegetales</option>
+              <option>Cambio de sustrato</option>
+              <option>Aislamiento del lote</option>
+              <option>Limpieza extraordinaria</option>
+              <option>Desinfecci&oacute;n</option>
+              <option>Ajuste de temperatura</option>
+              <option>Ajuste de humedad</option>
+              <option>Notificaci&oacute;n al responsable</option>
+              <option>Otra</option>
+            </select>
+          </div>
+          <div class="field" style="margin-top:14px;">
+            <label>Descripci&oacute;n</label>
+            <textarea id="accionDescripcion" placeholder="Detalle de la acci&oacute;n aplicada"></textarea>
+          </div>
+          <div class="field" style="margin-top:14px;">
+            <label>&iquest;Qued&oacute; resuelto?</label>
+            <div class="pill-group" style="margin-top:4px;">
+              <label class="pill"><input type="radio" name="resuelto" value="si" checked><span>S&iacute;</span></label>
+              <label class="pill"><input type="radio" name="resuelto" value="no"><span>No</span></label>
+              <label class="pill"><input type="radio" name="resuelto" value="seguimiento"><span>Requiere seguimiento</span></label>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <button type="submit" class="submit" id="submitBtn">Enviar registro</button>
-      <div class="status" id="status"></div>
-    </div>
-
-  </form>
+      <div class="panel">
+        <button type="submit" class="submit" id="submitBtn">Enviar registro</button>
+        <div class="status" id="status"></div>
+      </div>
+    </form>
+  </div>
 
   <div class="panel">
     <div class="log-head">
       <div class="section-title" style="border:none;padding:0;margin:0;">
-        <span class="section-num">06</span>
+        <span class="section-num">03</span>
         <h2>Historial de registros</h2>
       </div>
       <div style="display:flex;gap:8px;align-items:center;">
@@ -505,19 +578,9 @@
       <table id="logTable" style="display:none;">
         <thead>
           <tr>
-            <th>Fecha/hora</th>
-            <th>Lote</th>
-            <th>Sector</th>
-            <th>Rack</th>
-            <th>Band.</th>
-            <th>Estadio</th>
-            <th>Temp.</th>
-            <th>Hum.</th>
-            <th>Operario</th>
-            <th>Mortalidad</th>
-            <th>Anomal&iacute;as</th>
-            <th>Cierre</th>
-            <th>Obs.</th>
+            <th>Fecha</th><th>Hora</th><th>Operario</th><th>Sector</th><th>Rack</th><th>Band.</th><th>Lote</th>
+            <th>Estadio</th><th>Temp.</th><th>Hum.</th><th>Mortandad</th><th>Hongos</th><th>&Aacute;caros</th>
+            <th>Otras plagas</th><th>Alteraci&oacute;n</th><th>Acci&oacute;n correctiva</th><th>Resuelto</th><th>Obs.</th>
           </tr>
         </thead>
         <tbody id="logBody"></tbody>
@@ -527,31 +590,57 @@
   </div>
 
   <div class="note">
-    Datos de demostraci&oacute;n &middot; visibles para cualquiera con este enlace &middot; sin autenticaci&oacute;n
+    Datos de demostraci&oacute;n &middot; visibles para cualquiera con este enlace &middot; sin autenticaci&oacute;n real
   </div>
 </div>
 
 <script>
-const STORAGE_KEY = 'trazabilidad:entries:v2';
+const STORAGE_KEY = 'trazabilidad:entries:v3';
 let entries = [];
+let currentOperario = null;
 
-// stamp live preview
-const rackInput = document.getElementById('rack');
-const bandejaInput = document.getElementById('bandeja');
-function updateStamp(){
-  const r = rackInput.value || '\u2014';
-  const b = bandejaInput.value || '\u2014';
-  document.getElementById('stampValue').textContent = `${r} / ${b}`;
+// Live clock
+function tick(){
+  const now = new Date();
+  document.getElementById('clockValue').innerHTML =
+    now.toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'}) +
+    '<span class="d">' + now.toLocaleDateString('es-AR') + '</span>';
 }
-rackInput.addEventListener('input', updateStamp);
-bandejaInput.addEventListener('change', updateStamp);
+tick();
+setInterval(tick, 1000 * 30);
 
-// toggle -> detail field visibility
-document.querySelectorAll('input[data-detail]').forEach(cb => {
-  cb.addEventListener('change', () => {
-    const el = document.getElementById(cb.dataset.detail);
-    el.classList.toggle('show', cb.checked);
-  });
+// Login
+document.getElementById('loginBtn').addEventListener('click', () => {
+  const val = document.getElementById('loginInput').value.trim();
+  if(!val) return;
+  currentOperario = val;
+  document.getElementById('sessionWho').textContent = val;
+  document.getElementById('sessionBar').classList.add('active');
+  document.getElementById('loginPanel').style.display = 'none';
+  document.getElementById('formArea').classList.add('active');
+});
+document.getElementById('loginInput').addEventListener('keydown', (e) => {
+  if(e.key === 'Enter'){ e.preventDefault(); document.getElementById('loginBtn').click(); }
+});
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  currentOperario = null;
+  document.getElementById('sessionBar').classList.remove('active');
+  document.getElementById('formArea').classList.remove('active');
+  document.getElementById('loginPanel').style.display = 'block';
+  document.getElementById('loginInput').value = '';
+});
+
+// Mortandad detail toggle
+document.getElementById('mortandad').addEventListener('change', (e) => {
+  document.getElementById('detalleMortandad').classList.toggle('show', e.target.checked);
+});
+
+// Corrective action toggle
+document.getElementById('correctivaSi').addEventListener('change', () => {
+  document.getElementById('correctivaDetalle').classList.add('show');
+});
+document.getElementById('correctivaNo').addEventListener('change', () => {
+  document.getElementById('correctivaDetalle').classList.remove('show');
 });
 
 async function loadEntries(){
@@ -563,27 +652,21 @@ async function loadEntries(){
   }
   render();
 }
-
 async function saveEntries(){
   await window.storage.set(STORAGE_KEY, JSON.stringify(entries), true);
 }
-
 function escapeHtml(str){
   const d = document.createElement('div');
   d.textContent = str == null ? '' : str;
   return d.innerHTML;
 }
-
-function flag(v){
-  return v ? '<span class="flag-yes">S\u00ed</span>' : '<span class="flag-no">No</span>';
-}
+function flag(v){ return v ? '<span class="flag-yes">S\u00ed</span>' : '<span class="flag-no">No</span>'; }
 
 function render(){
   const tbody = document.getElementById('logBody');
   const table = document.getElementById('logTable');
   const empty = document.getElementById('emptyMsg');
-  const badge = document.getElementById('countBadge');
-  badge.textContent = entries.length;
+  document.getElementById('countBadge').textContent = entries.length;
 
   if(entries.length === 0){
     table.style.display = 'none';
@@ -595,18 +678,23 @@ function render(){
 
   tbody.innerHTML = entries.slice().reverse().map(e => `
     <tr>
-      <td>${e.fecha}</td>
-      <td>${escapeHtml(e.lote)}</td>
+      <td>${e.fechaStr}</td>
+      <td>${e.horaStr}</td>
+      <td>${escapeHtml(e.operario)}</td>
       <td>${escapeHtml(e.sector)}</td>
       <td class="num-cell">${escapeHtml(e.rack)}</td>
       <td class="num-cell">${escapeHtml(e.bandeja)}</td>
+      <td>${escapeHtml(e.lote)}</td>
       <td>${escapeHtml(e.estadio)}</td>
       <td class="num-cell">${escapeHtml(e.temperatura)}&deg;C</td>
       <td class="num-cell">${escapeHtml(e.humedad)}%</td>
-      <td>${escapeHtml(e.operario)}</td>
-      <td>${flag(e.mortalidad)}</td>
-      <td>${flag(e.anomalias)}</td>
-      <td>${flag(e.cierreLote)}</td>
+      <td>${flag(e.mortandad)}</td>
+      <td>${flag(e.hongos)}</td>
+      <td>${flag(e.acaros)}</td>
+      <td>${flag(e.otrasPlagas)}</td>
+      <td>${flag(e.alteracion)}</td>
+      <td>${e.correctiva === 'si' ? escapeHtml(e.tipoAccion) : '-'}</td>
+      <td>${e.correctiva === 'si' ? escapeHtml(e.resuelto) : '-'}</td>
       <td>${escapeHtml(e.observaciones || '-')}</td>
     </tr>
   `).join('');
@@ -620,9 +708,14 @@ document.getElementById('form').addEventListener('submit', async (ev) => {
   status.className = 'status';
   status.textContent = 'Enviando...';
 
+  const now = new Date();
+  const correctiva = document.getElementById('correctivaSi').checked ? 'si' : 'no';
+  const resueltoEl = document.querySelector('input[name="resuelto"]:checked');
+
   const entry = {
-    fecha: new Date().toLocaleString('es-AR'),
-    operario: document.getElementById('operario').value.trim(),
+    fechaStr: now.toLocaleDateString('es-AR'),
+    horaStr: now.toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'}),
+    operario: currentOperario,
     sector: document.getElementById('sector').value,
     rack: document.getElementById('rack').value,
     bandeja: document.getElementById('bandeja').value,
@@ -632,14 +725,18 @@ document.getElementById('form').addEventListener('submit', async (ev) => {
     humedad: document.getElementById('humedad').value,
     recambioVeg: document.getElementById('recambioVeg').checked,
     reposicionSustrato: document.getElementById('reposicionSustrato').checked,
-    mortalidad: document.getElementById('mortalidad').checked,
-    mortalidadDetalle: document.getElementById('mortalidadDetalle').value.trim(),
-    alteraciones: document.getElementById('alteraciones').checked,
-    alteracionesDetalle: document.getElementById('alteracionesDetalle').value.trim(),
-    anomalias: document.getElementById('anomalias').checked,
-    anomaliasDetalle: document.getElementById('anomaliasDetalle').value.trim(),
-    cierreLote: document.getElementById('cierreLote').checked,
-    observaciones: document.getElementById('observaciones').value.trim()
+    mortandad: document.getElementById('mortandad').checked,
+    mortandadCantidad: document.getElementById('mortandadCantidad').value.trim(),
+    mortandadObs: document.getElementById('mortandadObs').value.trim(),
+    hongos: document.getElementById('hongos').checked,
+    acaros: document.getElementById('acaros').checked,
+    otrasPlagas: document.getElementById('otrasPlagas').checked,
+    alteracion: document.getElementById('alteracion').checked,
+    observaciones: document.getElementById('observaciones').value.trim(),
+    correctiva: correctiva,
+    tipoAccion: correctiva === 'si' ? document.getElementById('tipoAccion').value : '',
+    accionDescripcion: correctiva === 'si' ? document.getElementById('accionDescripcion').value.trim() : '',
+    resuelto: correctiva === 'si' && resueltoEl ? resueltoEl.value : ''
   };
 
   try{
@@ -647,8 +744,8 @@ document.getElementById('form').addEventListener('submit', async (ev) => {
     await saveEntries();
     render();
     document.getElementById('form').reset();
-    document.querySelectorAll('.detail-field').forEach(el => el.classList.remove('show'));
-    updateStamp();
+    document.getElementById('detalleMortandad').classList.remove('show');
+    document.getElementById('correctivaDetalle').classList.remove('show');
     status.textContent = 'Registro guardado correctamente.';
   }catch(e){
     entries.pop();
@@ -661,16 +758,16 @@ document.getElementById('form').addEventListener('submit', async (ev) => {
 
 document.getElementById('exportBtn').addEventListener('click', () => {
   if(entries.length === 0) return;
-  const headers = ['Fecha','Operario','Sector','Rack','Bandeja','Lote','Estadio','Temperatura','Humedad',
-    'Recambio vegetales','Reposicion sustrato','Mortalidad','Detalle mortalidad',
-    'Alteraciones','Detalle alteraciones','Anomalias sanitarias','Detalle anomalias','Cierre de lote','Observaciones'];
+  const headers = ['Fecha','Hora','Operario','Sector','Rack','Bandeja','Lote','Estadio','Temperatura','Humedad',
+    'Recambio vegetales','Reposicion sustrato','Mortandad','Cantidad estimada','Obs. mortandad',
+    'Hongos','Acaros','Otras plagas','Alteracion comportamiento','Observaciones generales',
+    'Accion correctiva','Tipo de accion','Descripcion accion','Resuelto'];
   const rows = entries.map(e => [
-    e.fecha, e.operario, e.sector, e.rack, e.bandeja, e.lote, e.estadio, e.temperatura, e.humedad,
+    e.fechaStr, e.horaStr, e.operario, e.sector, e.rack, e.bandeja, e.lote, e.estadio, e.temperatura, e.humedad,
     e.recambioVeg ? 'Si' : 'No', e.reposicionSustrato ? 'Si' : 'No',
-    e.mortalidad ? 'Si' : 'No', e.mortalidadDetalle,
-    e.alteraciones ? 'Si' : 'No', e.alteracionesDetalle,
-    e.anomalias ? 'Si' : 'No', e.anomaliasDetalle,
-    e.cierreLote ? 'Si' : 'No', e.observaciones
+    e.mortandad ? 'Si' : 'No', e.mortandadCantidad, e.mortandadObs,
+    e.hongos ? 'Si' : 'No', e.acaros ? 'Si' : 'No', e.otrasPlagas ? 'Si' : 'No', e.alteracion ? 'Si' : 'No',
+    e.observaciones, e.correctiva === 'si' ? 'Si' : 'No', e.tipoAccion, e.accionDescripcion, e.resuelto
   ].map(v => `"${String(v ?? '').replace(/"/g,'""')}"`).join(','));
   const csv = [headers.join(','), ...rows].join('\n');
   const blob = new Blob([csv], {type:'text/csv'});
