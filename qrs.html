@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Inocuidarte &middot; Códigos QR</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fef3e6; --paper:#fffcf7; --paper-2:#fbf1e2; --line:#e3d3ad;
+    --olive:#97a256; --olive-dark:#717a3f; --olive-deep:#545c2c;
+    --text:#555f83; --text-dark:#3a4160; --text-dim:#8890ab;
+    --serif:'Newsreader', Georgia, serif; --sans:'IBM Plex Sans','Segoe UI',sans-serif;
+    --mono:'IBM Plex Mono','Courier New',monospace;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text-dark);font-family:var(--sans);padding:28px 16px 60px;}
+  .wrap{max-width:820px;margin:0 auto;}
+  .header{padding-bottom:20px;margin-bottom:26px;border-bottom:2px solid var(--olive);}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:3px;color:var(--olive-dark);text-transform:uppercase;margin-bottom:8px;}
+  h1{margin:0;font-family:var(--serif);font-weight:600;font-size:28px;color:var(--text-dark);}
+  .sub{color:var(--text-dim);font-size:13px;margin-top:8px;}
+
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  .card{
+    background:var(--paper); border:1px solid var(--line);
+    padding:20px; text-align:center;
+  }
+  .card h2{font-family:var(--serif);font-size:17px;margin:0 0 14px;color:var(--text-dark);}
+  .qr-box{
+    background:#fff; padding:12px; display:inline-block;
+    border:1px solid var(--line);
+  }
+  .url{
+    font-family:var(--mono); font-size:10.5px; color:var(--text-dim);
+    margin:14px 0 12px; word-break:break-all;
+  }
+  .dl-btn{
+    width:100%; padding:10px; background:var(--olive-deep); color:var(--paper);
+    border:none; font-family:var(--sans); font-weight:600; font-size:13px;
+    cursor:pointer; transition:background .15s;
+  }
+  .dl-btn:hover{background:var(--olive-dark);}
+
+  .note{
+    font-family:var(--mono); font-size:11px; color:var(--text-dim);
+    margin-top:24px; text-align:center; line-height:1.7;
+  }
+  @media (max-width:700px){ .grid{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="eyebrow">Inocuidarte</div>
+    <h1>C&oacute;digos QR del sistema</h1>
+    <div class="sub">Escane&aacute; o descarg&aacute; cada c&oacute;digo para imprimirlo junto a la estaci&oacute;n correspondiente.</div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Trazabilidad</h2>
+      <div class="qr-box" id="qr-trazabilidad"></div>
+      <div class="url">inocuidarte.com.ar/trazabilidad.html</div>
+      <button class="dl-btn" onclick="download('qr-trazabilidad','qr-trazabilidad.png')">Descargar PNG</button>
+    </div>
+    <div class="card">
+      <h2>POES</h2>
+      <div class="qr-box" id="qr-poes"></div>
+      <div class="url">inocuidarte.com.ar/poes.html</div>
+      <button class="dl-btn" onclick="download('qr-poes','qr-poes.png')">Descargar PNG</button>
+    </div>
+    <div class="card">
+      <h2>Cosecha</h2>
+      <div class="qr-box" id="qr-cosecha"></div>
+      <div class="url">inocuidarte.com.ar/cosecha.html</div>
+      <button class="dl-btn" onclick="download('qr-cosecha','qr-cosecha.png')">Descargar PNG</button>
+    </div>
+  </div>
+
+  <div class="note">
+    &copy; 2026 Macarena Callejas &ndash; Inocuidarte. Todos los derechos reservados.
+  </div>
+</div>
+
+<script>
+  const urls = {
+    'qr-trazabilidad': 'https://inocuidarte.com.ar/trazabilidad.html',
+    'qr-poes': 'https://inocuidarte.com.ar/poes.html',
+    'qr-cosecha': 'https://inocuidarte.com.ar/cosecha.html'
+  };
+
+  Object.entries(urls).forEach(([id, url]) => {
+    new QRCode(document.getElementById(id), {
+      text: url,
+      width: 220,
+      height: 220,
+      colorDark: '#3a4160',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  });
+
+  function download(containerId, filename){
+    const container = document.getElementById(containerId);
+    const img = container.querySelector('img');
+    const canvas = container.querySelector('canvas');
+    const dataUrl = img ? img.src : canvas.toDataURL('image/png');
+    const a = document.createElement('a');
+    a.href = dataUrl;
+    a.download = filename;
+    a.click();
+  }
+</script>
+</body>
+</html>
