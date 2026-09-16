@@ -465,11 +465,47 @@
         <div style="margin-top:14px;">
           <div class="toggle-row">
             <div class="toggle-text"><span class="t-label">Recambio de vegetales</span></div>
-            <label class="switch"><input type="checkbox" id="recambioVeg"><span class="track"></span><span class="thumb"></span></label>
+            <label class="switch"><input type="checkbox" id="recambioVeg" data-detail="detalleRecambioVeg"><span class="track"></span><span class="thumb"></span></label>
           </div>
+          <div class="detail-field" id="detalleRecambioVeg">
+            <div class="grid">
+              <div class="field">
+                <label>Tipo de vegetal</label>
+                <input type="text" id="vegetalTipo" placeholder="Ej: Zapallo, zanahoria, etc.">
+              </div>
+              <div class="field">
+                <label>Lote o identificaci&oacute;n del vegetal</label>
+                <input type="text" id="vegetalLote" placeholder="Ej: V-0912">
+              </div>
+              <div class="field">
+                <label>Cantidad incorporada <span class="unit">kg</span></label>
+                <input type="number" step="0.01" id="vegetalCantidad" placeholder="0.00">
+              </div>
+            </div>
+          </div>
+
           <div class="toggle-row">
             <div class="toggle-text"><span class="t-label">Reposici&oacute;n de sustrato</span></div>
-            <label class="switch"><input type="checkbox" id="reposicionSustrato"><span class="track"></span><span class="thumb"></span></label>
+            <label class="switch"><input type="checkbox" id="reposicionSustrato" data-detail="detalleSustrato"><span class="track"></span><span class="thumb"></span></label>
+          </div>
+          <div class="detail-field" id="detalleSustrato">
+            <div class="grid">
+              <div class="field">
+                <label>Tipo de sustrato</label>
+                <select id="sustratoTipo">
+                  <option>Afrechillo de trigo</option>
+                  <option>Otro</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Lote del sustrato</label>
+                <input type="text" id="sustratoLote" placeholder="Ej: S-0231">
+              </div>
+              <div class="field">
+                <label>Cantidad incorporada <span class="unit">kg</span></label>
+                <input type="number" step="0.01" id="sustratoCantidad" placeholder="0.00">
+              </div>
+            </div>
           </div>
           <div class="toggle-row">
             <div class="toggle-text"><span class="t-label">Mortandad</span></div>
@@ -579,7 +615,10 @@
         <thead>
           <tr>
             <th>Fecha</th><th>Hora</th><th>Operario</th><th>Sector</th><th>Rack</th><th>Band.</th><th>Lote</th>
-            <th>Estadio</th><th>Temp.</th><th>Hum.</th><th>Mortandad</th><th>Hongos</th><th>&Aacute;caros</th>
+            <th>Estadio</th><th>Temp.</th><th>Hum.</th>
+            <th>Vegetal</th><th>Lote veg.</th><th>Kg veg.</th>
+            <th>Sustrato</th><th>Lote sust.</th><th>Kg sust.</th>
+            <th>Mortandad</th><th>Hongos</th><th>&Aacute;caros</th>
             <th>Otras plagas</th><th>Alteraci&oacute;n</th><th>Acci&oacute;n correctiva</th><th>Resuelto</th><th>Obs.</th>
           </tr>
         </thead>
@@ -633,6 +672,14 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
 // Mortandad detail toggle
 document.getElementById('mortandad').addEventListener('change', (e) => {
   document.getElementById('detalleMortandad').classList.toggle('show', e.target.checked);
+});
+
+// Recambio de vegetales / Reposicion de sustrato: detalle condicional
+document.getElementById('recambioVeg').addEventListener('change', (e) => {
+  document.getElementById('detalleRecambioVeg').classList.toggle('show', e.target.checked);
+});
+document.getElementById('reposicionSustrato').addEventListener('change', (e) => {
+  document.getElementById('detalleSustrato').classList.toggle('show', e.target.checked);
 });
 
 // Corrective action toggle
@@ -716,6 +763,12 @@ function render(){
       <td>${escapeHtml(e.estadio)}</td>
       <td class="num-cell">${escapeHtml(e.temperatura)}&deg;C</td>
       <td class="num-cell">${escapeHtml(e.humedad)}%</td>
+      <td>${e.recambioVeg ? escapeHtml(e.vegetalTipo || '-') : '-'}</td>
+      <td>${e.recambioVeg ? escapeHtml(e.vegetalLote || '-') : '-'}</td>
+      <td>${e.recambioVeg && e.vegetalCantidad ? escapeHtml(e.vegetalCantidad) + ' kg' : '-'}</td>
+      <td>${e.reposicionSustrato ? escapeHtml(e.sustratoTipo || '-') : '-'}</td>
+      <td>${e.reposicionSustrato ? escapeHtml(e.sustratoLote || '-') : '-'}</td>
+      <td>${e.reposicionSustrato && e.sustratoCantidad ? escapeHtml(e.sustratoCantidad) + ' kg' : '-'}</td>
       <td>${flag(e.mortandad)}</td>
       <td>${flag(e.hongos)}</td>
       <td>${flag(e.acaros)}</td>
@@ -752,7 +805,13 @@ document.getElementById('form').addEventListener('submit', async (ev) => {
     temperatura: document.getElementById('temperatura').value,
     humedad: document.getElementById('humedad').value,
     recambioVeg: document.getElementById('recambioVeg').checked,
+    vegetalTipo: document.getElementById('recambioVeg').checked ? document.getElementById('vegetalTipo').value.trim() : '',
+    vegetalLote: document.getElementById('recambioVeg').checked ? document.getElementById('vegetalLote').value.trim() : '',
+    vegetalCantidad: document.getElementById('recambioVeg').checked ? document.getElementById('vegetalCantidad').value : '',
     reposicionSustrato: document.getElementById('reposicionSustrato').checked,
+    sustratoTipo: document.getElementById('reposicionSustrato').checked ? document.getElementById('sustratoTipo').value : '',
+    sustratoLote: document.getElementById('reposicionSustrato').checked ? document.getElementById('sustratoLote').value.trim() : '',
+    sustratoCantidad: document.getElementById('reposicionSustrato').checked ? document.getElementById('sustratoCantidad').value : '',
     mortandad: document.getElementById('mortandad').checked,
     mortandadCantidad: document.getElementById('mortandadCantidad').value.trim(),
     mortandadObs: document.getElementById('mortandadObs').value.trim(),
@@ -773,6 +832,8 @@ document.getElementById('form').addEventListener('submit', async (ev) => {
     render();
     document.getElementById('form').reset();
     document.getElementById('detalleMortandad').classList.remove('show');
+    document.getElementById('detalleRecambioVeg').classList.remove('show');
+    document.getElementById('detalleSustrato').classList.remove('show');
     document.getElementById('correctivaDetalle').classList.remove('show');
     status.textContent = 'Registro guardado correctamente.';
   }catch(e){
@@ -787,12 +848,15 @@ document.getElementById('form').addEventListener('submit', async (ev) => {
 document.getElementById('exportBtn').addEventListener('click', () => {
   if(entries.length === 0) return;
   const headers = ['Fecha','Hora','Operario','Sector','Rack','Bandeja','Lote','Estadio','Temperatura','Humedad',
-    'Recambio vegetales','Reposicion sustrato','Mortandad','Cantidad estimada','Obs. mortandad',
+    'Recambio vegetales','Tipo de vegetal','Lote del vegetal','Cantidad vegetal (kg)',
+    'Reposicion sustrato','Tipo de sustrato','Lote del sustrato','Cantidad sustrato (kg)',
+    'Mortandad','Cantidad estimada','Obs. mortandad',
     'Hongos','Acaros','Otras plagas','Alteracion comportamiento','Observaciones generales',
     'Accion correctiva','Tipo de accion','Descripcion accion','Resuelto'];
   const rows = entries.map(e => [
     e.fechaStr, e.horaStr, e.operario, e.sector, e.rack, e.bandeja, e.lote, e.estadio, e.temperatura, e.humedad,
-    e.recambioVeg ? 'Si' : 'No', e.reposicionSustrato ? 'Si' : 'No',
+    e.recambioVeg ? 'Si' : 'No', e.vegetalTipo, e.vegetalLote, e.vegetalCantidad,
+    e.reposicionSustrato ? 'Si' : 'No', e.sustratoTipo, e.sustratoLote, e.sustratoCantidad,
     e.mortandad ? 'Si' : 'No', e.mortandadCantidad, e.mortandadObs,
     e.hongos ? 'Si' : 'No', e.acaros ? 'Si' : 'No', e.otrasPlagas ? 'Si' : 'No', e.alteracion ? 'Si' : 'No',
     e.observaciones, e.correctiva === 'si' ? 'Si' : 'No', e.tipoAccion, e.accionDescripcion, e.resuelto
