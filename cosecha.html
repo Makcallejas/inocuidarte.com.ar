@@ -245,6 +245,25 @@
     color:var(--paper);
   }
 
+  .detail-field{
+    margin-top:14px;
+    padding:14px;
+    background:var(--paper-2);
+    border:1px dashed var(--line);
+    display:none;
+  }
+  .detail-field.show{display:block;}
+  .detail-field .detail-field{margin-top:14px;margin-bottom:0;background:var(--paper);}
+
+  .lote-note{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--olive-dark);
+    margin-top:6px;
+    display:none;
+  }
+  .lote-note.show{display:block;}
+
   /* Yield summary */
   .yield-panel{
     background:var(--paper-2);
@@ -401,14 +420,15 @@
           <div class="field">
             <label>Lote</label>
             <input type="text" id="lote" placeholder="Ej: L-0824" required>
+            <div class="lote-note" id="loteNote"></div>
           </div>
           <div class="field">
-            <label>Rack <span class="unit">1&ndash;64</span></label>
-            <input type="number" id="rack" min="1" max="64" placeholder="Ej: 12" required>
+            <label>Rack <span class="unit">1&ndash;64 &middot; opcional</span></label>
+            <input type="number" id="rack" min="1" max="64" placeholder="Ej: 12">
           </div>
           <div class="field">
-            <label>Bandeja <span class="unit">A&ndash;J</span></label>
-            <select id="bandeja" required>
+            <label>Bandeja <span class="unit">A&ndash;J &middot; opcional</span></label>
+            <select id="bandeja">
               <option value="">Seleccionar</option>
               <option>A</option><option>B</option><option>C</option><option>D</option><option>E</option>
               <option>F</option><option>G</option><option>H</option><option>I</option><option>J</option>
@@ -426,21 +446,38 @@
           <div class="field">
             <label>Peso bruto cosechado</label>
             <div class="measure">
-              <input type="number" step="0.01" id="pesoBruto" placeholder="0.00" required>
+              <input type="number" step="0.01" id="pesoBruto" placeholder="0.00">
               <span class="u">kg</span>
             </div>
           </div>
           <div class="field">
             <label>Peso luego del tamizado</label>
             <div class="measure">
-              <input type="number" step="0.01" id="pesoTamizado" placeholder="0.00" required>
+              <input type="number" step="0.01" id="pesoTamizado" placeholder="0.00">
               <span class="u">kg</span>
             </div>
           </div>
           <div class="field">
             <label>Peso despu&eacute;s del deshidratado</label>
             <div class="measure">
-              <input type="number" step="0.01" id="pesoDeshidratado" placeholder="0.00" required>
+              <input type="number" step="0.01" id="pesoDeshidratado" placeholder="0.00">
+              <span class="u">kg</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid" style="margin-top:14px;">
+          <div class="field">
+            <label>Frass obtenido</label>
+            <div class="measure">
+              <input type="number" step="0.01" id="frass" placeholder="0.00">
+              <span class="u">kg</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>Descartes del proceso</label>
+            <div class="measure">
+              <input type="number" step="0.01" id="descartes" placeholder="0.00">
               <span class="u">kg</span>
             </div>
           </div>
@@ -464,17 +501,96 @@
       <div class="panel">
         <div class="section-title">
           <span class="section-num">03</span>
-          <h2>Destino y observaciones</h2>
+          <h2>Producto obtenido / Destino productivo</h2>
         </div>
         <div class="field">
           <label>Destino</label>
           <div class="pill-group" style="margin-top:4px;">
-            <label class="pill"><input type="radio" name="destino" value="Larva entera" checked><span>Larva entera</span></label>
+            <label class="pill"><input type="radio" name="destino" value="Larva entera"><span>Larva entera</span></label>
+            <label class="pill"><input type="radio" name="destino" value="Larva viva"><span>Larva viva</span></label>
             <label class="pill"><input type="radio" name="destino" value="Harina"><span>Harina</span></label>
           </div>
         </div>
-        <div class="field full" style="margin-top:16px;">
-          <label>Observaciones</label>
+
+        <div class="detail-field" id="productoDetalle">
+          <div class="grid">
+            <div class="field">
+              <label>Cantidad destinada/obtenida</label>
+              <div class="measure">
+                <input type="number" step="0.01" id="cantidadProducto" placeholder="0.00">
+                <span class="u">kg</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>Identificaci&oacute;n del lote de producto final</label>
+              <input type="text" id="loteProductoFinal" placeholder="Ej: PF-0824">
+            </div>
+          </div>
+
+          <div class="detail-field" id="moliendaDetalle">
+            <div class="field">
+              <label>Peso obtenido luego de la molienda</label>
+              <div class="measure">
+                <input type="number" step="0.01" id="pesoMolienda" placeholder="0.00">
+                <span class="u">kg</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="yield-panel">
+          <div class="yield-title">Balance orientativo (informativo)</div>
+          <div class="yield-row" style="grid-template-columns:1fr 1fr 1fr;">
+            <div class="yield-item">
+              <div class="num" id="balProducto">&mdash;</div>
+              <div class="lbl">Producto obtenido</div>
+            </div>
+            <div class="yield-item">
+              <div class="num" id="balFrass">&mdash;</div>
+              <div class="lbl">Frass</div>
+            </div>
+            <div class="yield-item">
+              <div class="num" id="balDescartes">&mdash;</div>
+              <div class="lbl">Descartes</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="section-title">
+          <span class="section-num">04</span>
+          <h2>Destino / Despacho</h2>
+        </div>
+        <div class="grid">
+          <div class="field">
+            <label>Fecha de despacho</label>
+            <input type="date" id="fechaDespacho">
+          </div>
+          <div class="field">
+            <label>Cantidad despachada</label>
+            <div class="measure">
+              <input type="number" step="0.01" id="cantidadDespachada" placeholder="0.00">
+              <span class="u">kg</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>Destino o cliente</label>
+            <input type="text" id="destinoCliente" placeholder="Ej: Cliente A">
+          </div>
+          <div class="field">
+            <label>Identificaci&oacute;n de despacho/remito <span class="unit">opcional</span></label>
+            <input type="text" id="idDespacho" placeholder="Ej: R-0045">
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="section-title">
+          <span class="section-num">05</span>
+          <h2>Observaciones</h2>
+        </div>
+        <div class="field full">
           <textarea id="observaciones" placeholder="Opcional"></textarea>
         </div>
       </div>
@@ -489,7 +605,7 @@
   <div class="panel">
     <div class="log-head">
       <div class="section-title" style="border:none;padding:0;margin:0;">
-        <span class="section-num">04</span>
+        <span class="section-num">06</span>
         <h2>Historial de registros</h2>
       </div>
       <div style="display:flex;gap:8px;align-items:center;">
@@ -502,7 +618,11 @@
         <thead>
           <tr>
             <th>Fecha</th><th>Hora</th><th>Operario</th><th>Lote</th><th>Rack</th><th>Band.</th>
-            <th>P. bruto</th><th>P. tamizado</th><th>P. deshidr.</th><th>Rend. final</th><th>Destino</th><th>Obs.</th>
+            <th>P. bruto</th><th>P. tamizado</th><th>P. deshidr.</th><th>Rend. final</th>
+            <th>Frass</th><th>Descartes</th>
+            <th>Destino prod.</th><th>Cant. producto</th><th>Lote prod. final</th><th>P. molienda</th>
+            <th>Fecha despacho</th><th>Cant. despachada</th><th>Cliente</th><th>Remito</th>
+            <th>Obs.</th>
           </tr>
         </thead>
         <tbody id="logBody"></tbody>
@@ -569,7 +689,7 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
   document.getElementById('loginInput').value = '';
 });
 
-// Calculo de rendimiento en vivo
+// Calculo de rendimiento en vivo (sin cambios respecto a la version anterior)
 function calcYield(){
   const bruto = parseFloat(document.getElementById('pesoBruto').value);
   const tamizado = parseFloat(document.getElementById('pesoTamizado').value);
@@ -593,6 +713,43 @@ function calcYield(){
   document.getElementById(id).addEventListener('input', calcYield);
 });
 
+// Balance orientativo (informativo, no bloqueante)
+function updateBalance(){
+  const frass = document.getElementById('frass').value;
+  const descartes = document.getElementById('descartes').value;
+  const producto = document.getElementById('cantidadProducto').value;
+  document.getElementById('balFrass').textContent = frass !== '' ? parseFloat(frass).toFixed(2) + ' kg' : '\u2014';
+  document.getElementById('balDescartes').textContent = descartes !== '' ? parseFloat(descartes).toFixed(2) + ' kg' : '\u2014';
+  document.getElementById('balProducto').textContent = producto !== '' ? parseFloat(producto).toFixed(2) + ' kg' : '\u2014';
+}
+['frass','descartes','cantidadProducto'].forEach(id => {
+  document.getElementById(id).addEventListener('input', updateBalance);
+});
+
+// Destino productivo: al elegir cualquiera de las 3 opciones se despliega el detalle;
+// si es "Harina" se despliega ademas el peso de molienda.
+document.querySelectorAll('input[name="destino"]').forEach(radio => {
+  radio.addEventListener('change', (e) => {
+    document.getElementById('productoDetalle').classList.add('show');
+    document.getElementById('moliendaDetalle').classList.toggle('show', e.target.value === 'Harina');
+  });
+});
+
+// Aviso de antecedentes: si el lote ingresado ya tiene registros previos, se muestra
+// una indicacion visual (no bloqueante, no sobrescribe nada).
+document.getElementById('lote').addEventListener('input', (e) => {
+  const val = e.target.value.trim().toLowerCase();
+  const note = document.getElementById('loteNote');
+  if(!val){ note.classList.remove('show'); return; }
+  const previos = entries.filter(en => (en.lote || '').trim().toLowerCase() === val).length;
+  if(previos > 0){
+    note.textContent = `Este lote ya tiene ${previos} registro(s) anterior(es) asociado(s).`;
+    note.classList.add('show');
+  }else{
+    note.classList.remove('show');
+  }
+});
+
 async function loadEntries(){
   try{
     const res = await storageGet(STORAGE_KEY);
@@ -609,6 +766,10 @@ function escapeHtml(str){
   const d = document.createElement('div');
   d.textContent = str == null ? '' : str;
   return d.innerHTML;
+}
+function cell(v, unit){
+  if(v === null || v === undefined || v === ''){ return '-'; }
+  return escapeHtml(v) + (unit ? ' ' + unit : '');
 }
 
 function render(){
@@ -631,22 +792,70 @@ function render(){
       <td>${e.horaStr}</td>
       <td>${escapeHtml(e.operario)}</td>
       <td>${escapeHtml(e.lote)}</td>
-      <td class="num-cell">${escapeHtml(e.rack)}</td>
-      <td class="num-cell">${escapeHtml(e.bandeja)}</td>
-      <td class="num-cell">${escapeHtml(e.pesoBruto)} kg</td>
-      <td class="num-cell">${escapeHtml(e.pesoTamizado)} kg</td>
-      <td class="num-cell">${escapeHtml(e.pesoDeshidratado)} kg</td>
-      <td class="num-cell">${escapeHtml(e.rendimientoFinal)}</td>
-      <td>${escapeHtml(e.destino)}</td>
-      <td>${escapeHtml(e.observaciones || '-')}</td>
+      <td class="num-cell">${cell(e.rack)}</td>
+      <td class="num-cell">${cell(e.bandeja)}</td>
+      <td class="num-cell">${cell(e.pesoBruto, 'kg')}</td>
+      <td class="num-cell">${cell(e.pesoTamizado, 'kg')}</td>
+      <td class="num-cell">${cell(e.pesoDeshidratado, 'kg')}</td>
+      <td class="num-cell">${cell(e.rendimientoFinal)}</td>
+      <td class="num-cell">${cell(e.frass, 'kg')}</td>
+      <td class="num-cell">${cell(e.descartes, 'kg')}</td>
+      <td>${cell(e.destino)}</td>
+      <td class="num-cell">${cell(e.cantidadProducto, 'kg')}</td>
+      <td>${cell(e.loteProductoFinal)}</td>
+      <td class="num-cell">${cell(e.pesoMolienda, 'kg')}</td>
+      <td>${cell(e.fechaDespacho)}</td>
+      <td class="num-cell">${cell(e.cantidadDespachada, 'kg')}</td>
+      <td>${cell(e.destinoCliente)}</td>
+      <td>${cell(e.idDespacho)}</td>
+      <td>${cell(e.observaciones)}</td>
     </tr>
   `).join('');
+}
+
+// Bloque A: datos de cosecha/procesamiento (incluye producto obtenido)
+function hasBloqueA(){
+  const destinoEl = document.querySelector('input[name="destino"]:checked');
+  return [
+    document.getElementById('pesoBruto').value,
+    document.getElementById('pesoTamizado').value,
+    document.getElementById('pesoDeshidratado').value,
+    document.getElementById('frass').value,
+    document.getElementById('descartes').value,
+    document.getElementById('cantidadProducto').value,
+    document.getElementById('loteProductoFinal').value.trim(),
+    document.getElementById('pesoMolienda').value
+  ].some(v => v !== '') || !!destinoEl;
+}
+// Bloque B: datos de destino/despacho
+function hasBloqueB(){
+  return [
+    document.getElementById('fechaDespacho').value,
+    document.getElementById('cantidadDespachada').value,
+    document.getElementById('destinoCliente').value.trim(),
+    document.getElementById('idDespacho').value.trim()
+  ].some(v => v !== '');
 }
 
 document.getElementById('form').addEventListener('submit', async (ev) => {
   ev.preventDefault();
   const btn = document.getElementById('submitBtn');
   const status = document.getElementById('status');
+
+  const loteVal = document.getElementById('lote').value.trim();
+  if(!loteVal){
+    status.className = 'status err';
+    status.textContent = 'El campo Lote es obligatorio.';
+    return;
+  }
+  const bloqueA = hasBloqueA();
+  const bloqueB = hasBloqueB();
+  if(!bloqueA && !bloqueB){
+    status.className = 'status err';
+    status.textContent = 'Complet\u00e1 al menos un dato de Cosecha/Procesamiento o de Destino/Despacho.';
+    return;
+  }
+
   btn.disabled = true;
   status.className = 'status';
   status.textContent = 'Enviando...';
@@ -654,21 +863,31 @@ document.getElementById('form').addEventListener('submit', async (ev) => {
   const now = new Date();
   const bruto = parseFloat(document.getElementById('pesoBruto').value);
   const deshidratado = parseFloat(document.getElementById('pesoDeshidratado').value);
-  const rendimientoFinal = (bruto > 0 && !isNaN(deshidratado)) ? ((deshidratado / bruto) * 100).toFixed(1) + '%' : '-';
+  const rendimientoFinal = (bruto > 0 && !isNaN(deshidratado)) ? ((deshidratado / bruto) * 100).toFixed(1) + '%' : '';
   const destinoEl = document.querySelector('input[name="destino"]:checked');
+  const destinoVal = destinoEl ? destinoEl.value : '';
 
   const entry = {
     fechaStr: now.toLocaleDateString('es-AR'),
     horaStr: now.toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'}),
     operario: currentOperario,
-    lote: document.getElementById('lote').value.trim(),
+    lote: loteVal,
     rack: document.getElementById('rack').value,
     bandeja: document.getElementById('bandeja').value,
     pesoBruto: document.getElementById('pesoBruto').value,
     pesoTamizado: document.getElementById('pesoTamizado').value,
     pesoDeshidratado: document.getElementById('pesoDeshidratado').value,
     rendimientoFinal: rendimientoFinal,
-    destino: destinoEl ? destinoEl.value : '',
+    frass: document.getElementById('frass').value,
+    descartes: document.getElementById('descartes').value,
+    destino: destinoVal,
+    cantidadProducto: document.getElementById('cantidadProducto').value,
+    loteProductoFinal: document.getElementById('loteProductoFinal').value.trim(),
+    pesoMolienda: destinoVal === 'Harina' ? document.getElementById('pesoMolienda').value : '',
+    fechaDespacho: document.getElementById('fechaDespacho').value,
+    cantidadDespachada: document.getElementById('cantidadDespachada').value,
+    destinoCliente: document.getElementById('destinoCliente').value.trim(),
+    idDespacho: document.getElementById('idDespacho').value.trim(),
     observaciones: document.getElementById('observaciones').value.trim()
   };
 
@@ -679,6 +898,13 @@ document.getElementById('form').addEventListener('submit', async (ev) => {
     document.getElementById('form').reset();
     document.getElementById('rendTamizado').textContent = '\u2014';
     document.getElementById('rendFinal').textContent = '\u2014';
+    document.getElementById('balFrass').textContent = '\u2014';
+    document.getElementById('balDescartes').textContent = '\u2014';
+    document.getElementById('balProducto').textContent = '\u2014';
+    document.getElementById('productoDetalle').classList.remove('show');
+    document.getElementById('moliendaDetalle').classList.remove('show');
+    document.getElementById('loteNote').classList.remove('show');
+    status.className = 'status';
     status.textContent = 'Registro guardado correctamente.';
   }catch(e){
     entries.pop();
@@ -691,10 +917,19 @@ document.getElementById('form').addEventListener('submit', async (ev) => {
 
 document.getElementById('exportBtn').addEventListener('click', () => {
   if(entries.length === 0) return;
-  const headers = ['Fecha','Hora','Operario','Lote','Rack','Bandeja','Peso bruto (kg)','Peso tamizado (kg)','Peso deshidratado (kg)','Rendimiento final','Destino','Observaciones'];
+  const headers = ['Fecha','Hora','Operario','Lote','Rack','Bandeja',
+    'Peso bruto (kg)','Peso tamizado (kg)','Peso deshidratado (kg)','Rendimiento final',
+    'Frass (kg)','Descartes (kg)',
+    'Destino productivo','Cantidad producto (kg)','Lote producto final','Peso molienda (kg)',
+    'Fecha despacho','Cantidad despachada (kg)','Destino/Cliente','ID despacho/remito',
+    'Observaciones'];
   const rows = entries.map(e => [
     e.fechaStr, e.horaStr, e.operario, e.lote, e.rack, e.bandeja,
-    e.pesoBruto, e.pesoTamizado, e.pesoDeshidratado, e.rendimientoFinal, e.destino, e.observaciones
+    e.pesoBruto, e.pesoTamizado, e.pesoDeshidratado, e.rendimientoFinal,
+    e.frass, e.descartes,
+    e.destino, e.cantidadProducto, e.loteProductoFinal, e.pesoMolienda,
+    e.fechaDespacho, e.cantidadDespachada, e.destinoCliente, e.idDespacho,
+    e.observaciones
   ].map(v => `"${String(v ?? '').replace(/"/g,'""')}"`).join(','));
   const csv = [headers.join(','), ...rows].join('\n');
   const blob = new Blob([csv], {type:'text/csv'});
