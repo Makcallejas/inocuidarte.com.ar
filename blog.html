@@ -41,6 +41,24 @@
     .post-card p { font-size: .9rem; color: #555; line-height: 1.65; margin-bottom: 16px; }
     .post-meta { font-size: .78rem; color: var(--navy); opacity: .5; display: flex; gap: 16px; }
     .read-more { display: inline-flex; align-items: center; gap: 5px; font-size: .85rem; font-weight: 500; color: var(--olive); margin-top: 4px; }
+      .back-link{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--navy);opacity:.6;font-size:.85rem;margin-bottom:28px;}
+    .back-link:hover{opacity:1;}
+    .article-tag{display:inline-block;font-size:.78rem;font-weight:500;padding:4px 12px;border-radius:999px;background:var(--olive);color:#fff;margin-bottom:16px;}
+    .article-header h1{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,5vw,2.5rem);color:var(--navy);line-height:1.25;margin-bottom:14px;}
+    .article-meta{font-size:.82rem;color:var(--navy);opacity:.55;display:flex;gap:18px;flex-wrap:wrap;margin-bottom:28px;}
+    .article-body{background:#fff;border-radius:var(--radius);padding:40px 36px;box-shadow:0 2px 16px rgba(85,95,131,.08);line-height:1.8;font-size:.97rem;}
+    .article-body h2{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--navy);margin:36px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--cream-dark);}
+    .article-body p{margin-bottom:18px;}
+    .article-body ul{list-style:none;padding:0;margin:0 0 20px;}
+    .article-body ul li{padding:5px 0 5px 28px;position:relative;color:#444;}
+    .article-body ul li::before{content:'✔';position:absolute;left:0;color:var(--olive);font-size:.85rem;}
+    .article-body strong{color:var(--navy);font-weight:500;}
+    .article-body blockquote{background:var(--cream);border-left:4px solid var(--olive);border-radius:0 10px 10px 0;padding:18px 22px;margin:28px 0;font-size:.93rem;}
+    .cta-box{background:var(--navy);border-radius:var(--radius);padding:28px 32px;text-align:center;margin-top:40px;}
+    .cta-box p{color:rgba(255,255,255,.8);margin-bottom:16px;font-size:.93rem;}
+    .cta-box a{display:inline-flex;align-items:center;gap:8px;padding:11px 26px;border-radius:999px;background:var(--olive);color:#fff;font-weight:500;text-decoration:none;font-size:.92rem;}
+    .site-footer{text-align:center;padding:32px 0 0;font-size:.78rem;color:var(--navy);opacity:.45;border-top:1px solid var(--cream-dark);margin-top:60px;}
+    @media(max-width:480px){.article-body{padding:28px 20px;}}
   </style>
 </head>
 <body>
@@ -64,11 +82,11 @@
     <p>Artículos prácticos sobre inocuidad, manipulación segura de alimentos y buenas prácticas para emprendedores y profesionales gastronómicos.</p>
   </section>
   <div class="post-grid">
-    <a class="post-card" href="tenebrio_molitor.html">
-      <span class="post-tag">Compostaje</span>
+    <a class="post-card" href="#tenebrio-molitor">
+      <span class="post-tag">Proteínas alternativas</span>
       <h2>Tenebrio molitor: ¿la proteína del futuro?</h2>
-      <p> Conocé cómo la bioconversión puede los recursos útiles con triple impacto: ambiental, económico y social.</p>
-      <div class="post-meta"><span>📅 2025</span><span>⏱ 4 min de lectura</span></div>
+      <p>Un recorrido por el potencial de los insectos como fuente alternativa de proteínas para alimentación animal y futura alimentación humana.</p>
+      <div class="post-meta"><span>📅 2026</span><span>✍️ Macarena Callejas</span><span>⏱ 3 min de lectura</span></div>
       <div class="read-more">Leer artículo →</div>
     </a>
     <a class="post-card" href="bpm-que-son-y-para-que-sirven.html">
@@ -79,7 +97,40 @@
       <div class="read-more">Leer artículo →</div>
     </a>
   </div>
-    <footer class="site-footer"><p>© <span id="anio"></span> Inocuidarte · inocuidarte.ok@gmail.com</p><script>document.getElementById("anio").textContent = new Date().getFullYear();</script></footer>
+  <section id="tenebrio-molitor" class="tenebrio-article" style="margin-top:40px;">
+  <div class="article-header">
+    <span class="article-tag">Proteínas alternativas</span>
+    <h1>Tenebrio molitor: ¿la proteína del futuro?</h1>
+    <div class="article-meta">
+      <span>📅 2025</span>
+      <span>✍️ Macarena Callejas</span>
+      <span>⏱ 3 min de lectura</span>
+    </div>
+  </div>
+
+  <article class="article-body">
+    <p>Cuando hablamos de alimentación animal y de los desafíos que plantea el crecimiento de la población mundial, cada vez resulta más necesario pensar en fuentes alternativas de proteínas. En este contexto, los insectos aparecen como una opción que despierta un creciente interés.</p>
+
+    <p>Entre ellos se encuentra <em>Tenebrio molitor</em>, conocido popularmente como gusano de la harina. Su etapa larval presenta un contenido significativo de proteínas y lípidos, y puede ser utilizada tanto como alimento vivo como para la elaboración de productos procesados, por ejemplo, harina de insecto.</p>
+
+    <p>Una de las principales razones por las que los insectos resultan interesantes es su eficiencia en el uso de recursos. Su producción puede realizarse en espacios relativamente reducidos y permite aprovechar determinados subproductos vegetales como parte de su alimentación. Además, los sistemas de producción pueden generar otros productos aprovechables, como el excremento, que puede encontrar aplicaciones como enmienda orgánica.</p>
+
+    <p>Actualmente, el mayor desarrollo se encuentra en el ámbito de la alimentación animal, donde los insectos pueden formar parte de estrategias para diversificar las fuentes proteicas disponibles. Pero la discusión no termina ahí: también existe interés en su posible incorporación futura a la alimentación humana, siempre dentro de los marcos regulatorios y de inocuidad correspondientes.</p>
+
+    <p>Claro que todavía quedan preguntas por responder. Es necesario seguir estudiando aspectos productivos, nutricionales, tecnológicos, regulatorios y, especialmente, la aceptación del consumidor.</p>
+
+    <blockquote>Porque quizás el desafío más grande no sea producirlos.<br>Quizás sea animarnos a probarlos.</blockquote>
+
+    <p><strong>¿Y vos, te animarías a probar una proteína obtenida a partir de Tenebrio molitor?</strong></p>
+
+    <p>Téc. Callejas Macarena— Inocuidarte<br><i>Inocuidad alimentaria aplicada a la vida real.</i></p>
+    <div class="cta-box">
+      <p>¿Querés aprender más sobre inocuidad alimentaria? En Inocuidarte tenemos cursos prácticos para vos.</p>
+      <a href="https://wa.me/5491150548208?text=Hola%20quiero%20informaci%C3%B3n%20sobre%20los%20cursos%20de%20Inocuidarte" target="_blank">💬 Consultar por WhatsApp</a>
+    </div>
+  </article>
+</section>
+        <footer class="site-footer"><p>© <span id="anio"></span> Inocuidarte · inocuidarte.ok@gmail.com</p><script>document.getElementById("anio").textContent = new Date().getFullYear();</script></footer>
 </div>
 </body>
 </html>
